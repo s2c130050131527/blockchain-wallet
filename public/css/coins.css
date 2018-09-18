@@ -1,0 +1,110 @@
+.metric {
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  padding: 20px;
+  margin-bottom: 30px;
+  border: 1px solid #DCE6EB; }
+  .metric .icon-bitcoin {
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    border-radius: 50%;
+    float: left;
+    width: 50px;
+    height: 50px;
+    line-height: 50px;
+    background-image: url('https://i.imgur.com/8RQ5CQB.png');
+    text-align: center; }
+  .metric .icon-lobstex {
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    border-radius: 50%;
+    float: left;
+    width: 50px;
+    height: 50px;
+    line-height: 50px;
+    background-image: url('https://i.imgur.com/t83sKvG.png');
+    text-align: center; }
+  .metric .icon-epic {
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    border-radius: 50%;
+    float: left;
+    width: 50px;
+    height: 50px;
+    line-height: 50px;
+    background-image: url('https://i.imgur.com/J5tiiYs.png');
+    text-align: center; }
+
+  .metric .icon-litecoin {
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    border-radius: 50%;
+    float: left;
+    width: 50px;
+    height: 50px;
+    line-height: 50px;
+    background-image: url('https://i.imgur.com/uzNcr18.png');
+    text-align: center; }
+  
+.metric .icon-monero {
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    border-radius: 50%;
+    float: left;
+    width: 50px;
+    height: 50px;
+    line-height: 50px;
+    background-image: url('https://i.imgur.com/zTGa6GX.png');
+    text-align: center; }
+
+.metric .icon-dash {
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    border-radius: 50%;
+    float: left;
+    width: 50px;
+    height: 50px;
+    line-height: 50px;
+    background-image: url('https://i.imgur.com/0VKBQF2.png');
+    text-align: center; }
+
+
+.metric .icon-index {
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    border-radius: 50%;
+    float: left;
+    width: 50px;
+    height: 50px;
+    line-height: 50px;
+    background-image: url('https://i.imgur.com/6EjdfbC.png');
+    text-align: center; }
+
+.metric .icon-securecloudcoin {
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    border-radius: 50%;
+    float: left;
+    width: 50px;
+    height: 50px;
+    line-height: 50px;
+    background-image: url('https://i.imgur.com/Jy9Xw7A.png');
+    text-align: center; }
+
+
+
+
+  .metric .icon i {
+      font-size: 18px;
+      color: #fff; }
+  .metric p {
+    margin-bottom: 0;
+    line-height: 1.2;
+    text-align: right; }
+  .metric .number {
+    display: block;
+    font-size: 28px;
+    font-weight: 300; }
+  .metric .title {
+    font-size: 16px; }
