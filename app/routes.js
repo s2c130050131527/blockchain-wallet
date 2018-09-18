@@ -9,7 +9,7 @@ module.exports = function(app, passport) {
     const expressJwt = require('express-jwt');
     const authenticate = expressJwt({secret : serverSecret});
 
-    app.use(cors({origin:false}));
+    app.use(cors({origin:'http://ec2-54-250-242-188.ap-northeast-1.compute.amazonaws.com'}));
 
     
     app.post('/authenticate',authenticate , function (req,res) {    
