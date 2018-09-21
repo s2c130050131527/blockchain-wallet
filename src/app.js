@@ -34,7 +34,6 @@ app.use(function(req, res, next) {
   next(createError(404));
 });
 
-console.log(db);
 
 
 module.exports = app;

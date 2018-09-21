@@ -1,7 +1,6 @@
 import UserService from './user.service';
 class UserController {
   addUser(req, res) {
-    console.log(req.body);
     const userObject = req.body;
     try {
       UserService.addUser(userObject);

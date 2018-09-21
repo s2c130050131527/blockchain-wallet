@@ -6,19 +6,20 @@ class LoginService {
     }
 
     addUser(user){
-      db.insertOne(user,(err,res) => {
+      db.db.collection('users').insertOne(user,(err,res) => {
         console.log('User Added');
       });
     }
 
-    findUser(userId){
-      db.findOne({id: userId},(err,res) => {
-        return res;
-      })
+    async findUser(userId){
+      let user = null;
+      console.log(userId);
+      user = await db.db.collection('users').findOne({id:userId});
+      return user;
     }
 
     addWallet(wallet, userId){
-      db.updateOne({id:userId}, {$set: {wallet:wallet}},(err, res) => {
+      db.db.collection('users').updateOne({id:userId}, {$set: {wallet:wallet}},(err, res) => {
         console.log('wallet added');
       });
     }

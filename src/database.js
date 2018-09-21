@@ -20,12 +20,6 @@ class Database {
     })
       
   }
-  _close() {
-    console.log('====================================');
-    console.log('Connection closed');
-    mongoose.connection.close();
-    console.log('====================================');
-  }
 }
 
 export default new Database();

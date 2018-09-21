@@ -1,3 +1,5 @@
+import { Buffer } from 'buffer';
+
 // config/passport.js
 
 // load all the things we need
@@ -10,7 +12,7 @@ var dbconfig = require('../mysql-database');
 var connection = mysql.createConnection(dbconfig.connection);
 var GoogleAuthenticator = require('passport-2fa-totp').GoogeAuthenticator;
 var TwoFA = require('passport-2fa-totp').Strategy;
-
+var totp = require('notp').totp;
 
 connection.query('USE ' + dbconfig.database);
 module.exports = function(passport) {
@@ -60,7 +62,6 @@ module.exports = function(passport) {
                     var insertQuery = "INSERT INTO users ( username, password,secret_text,svg_img,twofa_setup ) values (?,?,?,?,?)";
 
                     connection.query(insertQuery,[newUserMysql.username, newUserMysql.password,newUserMysql.qrInfo.secret,imgCode,newUserMysql.twoFASetup],function(err, rows) {
-                        console.log('addo');
                         newUserMysql.id = rows.insertId;
                         return done(null, newUserMysql);
                     });
@@ -107,7 +108,6 @@ module.exports = function(passport) {
             });
         },
         function(req,user,done){
-            console.log(user);
             var secret = GoogleAuthenticator.decodeSecret(user.secret_text);
             done(null, secret,30);
         })
@@ -135,10 +135,7 @@ module.exports = function(passport) {
                     req.err = 'Please Try Registration Again';
                     return done(null,req.err); // req.flash is the way to set flashdata using connect-flash
                 }
-                
-                var secret = GoogleAuthenticator.decodeSecret(rows[0].secret_text);
-                if(!password === secret)
-                    {
+                    if(isValid){
                         console.log(3);
                         req.err = 'Auth Token Invalid';
                         return done(null, req.err);

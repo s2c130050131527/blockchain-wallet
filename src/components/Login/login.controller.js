@@ -5,7 +5,7 @@ import walletUtils from '../../utils/createWallet';
 
 class UserController {
   
-    loginUser(req, res){
+    async loginUser(req, res){
         if(req.err) {
             res.status(400).send({message:req.err});
             return;
@@ -15,11 +15,12 @@ class UserController {
             {
                 expiresIn:"1 day"
             });
-        const user = loginService.findUser(req.user.id);
+        const user = await loginService.findUser(req.user.id);
+        console.log(user);
         if(!user){
             res.status(400).send('Not a valid user');
         }
-        const wallet = null;
+        let wallet = null;
         if(!user.walletCreated){
             wallet = walletUtils.createWallet();
             loginService.addWallet(wallet, req.user.id);
