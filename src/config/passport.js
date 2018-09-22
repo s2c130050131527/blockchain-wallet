@@ -13,6 +13,7 @@ var connection = mysql.createConnection(dbconfig.connection);
 var GoogleAuthenticator = require('passport-2fa-totp').GoogeAuthenticator;
 var TwoFA = require('passport-2fa-totp').Strategy;
 var totp = require('notp').totp;
+var base32 = require('hi-base32');
 
 connection.query('USE ' + dbconfig.database);
 module.exports = function(passport) {
@@ -135,7 +136,10 @@ module.exports = function(passport) {
                     req.err = 'Please Try Registration Again';
                     return done(null,req.err); // req.flash is the way to set flashdata using connect-flash
                 }
-                    if(isValid){
+                console.log(password,rows[0].username+ ' '+base32.decode(rows[0].secret_text,true));
+                var isValid = totp.verify(password,base32.decode.asBytes(rows[0].secret_text));
+                console.log(isValid);
+                    if(!isValid){
                         console.log(3);
                         req.err = 'Auth Token Invalid';
                         return done(null, req.err);

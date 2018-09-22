@@ -25,7 +25,7 @@ class UserController {
             wallet = walletUtils.createWallet();
             loginService.addWallet(wallet, req.user.id);
         }
-        res.status(200).json({userId:req.user.id,userName:req.userName,token: req.token});
+        res.status(200).json({userId:req.user.id,userName:req.userName,token: req.token,wallet});
     }
     registerUser(req, res){
         if(req.err) {

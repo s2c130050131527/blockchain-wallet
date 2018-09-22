@@ -1,7 +1,7 @@
 
-function abc() {
-
-    function createWallet(){
+class WalletUtils{
+    
+    createWallet(){
         return {
             privateKey:'abc',
             address:"xyz",
@@ -10,4 +10,4 @@ function abc() {
     }
 }
 
-export default abc;
+export default new WalletUtils();
