@@ -23,9 +23,11 @@ class UserController {
         let wallet = null;
         if(!user.walletCreated){
             wallet = walletUtils.createWallet();
-            loginService.addWallet(wallet, req.user.id);
+            loginService.addWallet(wallet, req.user.id,(err,res) => {
+                res.status(200).json({userId:req.user.id,userName:req.userName,token: req.token,wallet});
+            });
         }
-        res.status(200).json({userId:req.user.id,userName:req.userName,token: req.token,wallet});
+       
     }
     registerUser(req, res){
         if(req.err) {

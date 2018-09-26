@@ -18,10 +18,8 @@ class LoginService {
       return user;
     }
 
-    addWallet(wallet, userId){
-      db.db.collection('users').updateOne({id:userId}, {$set: {wallet:wallet}},(err, res) => {
-        console.log('wallet added');
-      });
+    addWallet(wallet, userId,cb){
+      db.db.collection('users').updateOne({id:userId}, {$set: {wallet:wallet,walletCreated:true}},cb);
     }
   }
 
