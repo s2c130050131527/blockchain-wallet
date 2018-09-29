@@ -16,16 +16,19 @@ class UserController {
                 expiresIn:"1 day"
             });
         const user = await loginService.findUser(req.user.id);
-        console.log(user);
         if(!user){
             res.status(400).send('Not a valid user');
         }
         let wallet = null;
+
         if(!user.walletCreated){
             wallet = walletUtils.createWallet();
-            loginService.addWallet(wallet, req.user.id,(err,res) => {
-                res.status(200).json({userId:req.user.id,userName:req.userName,token: req.token,wallet});
+            loginService.addWallet(wallet, req.user.id,(client) => {
+                console.log(client);
+                res.status(200).json({userId:req.user.id,userName:req.userName,token: req.token,wallet :wallet.address});
             });
+        }else{
+            res.status(200).json({userId:req.user.id,userName:req.userName,token: req.token,wallet :user.wallet.address});
         }
        
     }
@@ -35,7 +38,7 @@ class UserController {
             return;
         }
         const imgCode = Buffer.from(req.user.qrInfo.qr).toString('base64');
-        res.status(200).send({message: 'Registration Successful', userid: req.user.id, imgCode: imgCode});
+        res.status(200).send({message: 'Registration Successful', userid: req.user.id, imgCode: imgCode,secret:req.user.qrInfo.secret});
     }
     setuptwoFA(req, res){
         if(req.err) {

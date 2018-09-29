@@ -3,7 +3,7 @@ module.exports = {
     'connection': {
         'host': 'localhost',
         'user': 'root',
-        'password': 'mysql'
+        'password': 'root'
     },
 	'database': 'sslwallet',
     'users_table': 'users'

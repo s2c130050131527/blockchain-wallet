@@ -19,7 +19,12 @@ class LoginService {
     }
 
     addWallet(wallet, userId,cb){
-      db.db.collection('users').updateOne({id:userId}, {$set: {wallet:wallet,walletCreated:true}},cb);
+      db.db.collection('users').updateOne({id:userId}, {$set: {wallet:wallet,walletCreated:true}},((err,res)=>{
+        if(err){
+          res.status(500).send('DB Error');
+        }
+        cb(res);
+      }));
     }
   }
 

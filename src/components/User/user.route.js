@@ -1,5 +1,6 @@
 import UserController from './user.controller';
 
+
 class UserRouter {
   constructor(router) {
     this.router = router;
@@ -9,12 +10,12 @@ class UserRouter {
   }
 
   register() {
-    this.router.post('/add',this.addUser.bind(this));
+    this.router.post('/balance',this.getBalance.bind(this), this.userController.getBalance);
     this.router.get('/getall', this.getAllUsers.bind(this));
     this.router.get('/get/:id', this.getUser.bind(this));
   }
-  addUser(req, res) {
-    this.userController.addUser(req, res);
+  getBalance(req, res,next) {
+   next();
   }
   getUser(req, res) {
     this.userController.getUser(req, res);
