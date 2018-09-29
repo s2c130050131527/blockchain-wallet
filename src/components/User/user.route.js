@@ -11,14 +11,14 @@ class UserRouter {
 
   register() {
     this.router.post('/balance',this.getBalance.bind(this), this.userController.getBalance);
-    this.router.get('/getall', this.getAllUsers.bind(this));
+    this.router.post('/transfer', this.getUser.bind(this),this.userController.transfer);
     this.router.get('/get/:id', this.getUser.bind(this));
   }
   getBalance(req, res,next) {
    next();
   }
-  getUser(req, res) {
-    this.userController.getUser(req, res);
+  getUser(req, res, next) {
+    next();
   }
   getAllUsers(req, res) {
     this.userController.getAllUsers(req, res);

@@ -1,5 +1,6 @@
 import UserService from './user.service';
 import wallet from '../../utils/createWallet'
+import userService from './user.service';
 class UserController {
   async getBalance(req, res) {
     const userObject = req.body;
@@ -13,9 +14,33 @@ class UserController {
     });
    
   }
-  getUser(req, res) {
-    const id = parseInt(req.params.id, 10);
-   
+  async transfer(req, res) {
+    const userObject = req.body;
+    console.log(userObject);
+    const user = await UserService.findUser(parseInt(userObject.userId));
+    const address = user.wallet.address;
+    wallet.getBalance(address,(err,balance) => {
+      console.log(err,balance)
+      if(err){
+        res.status(500).send("Internal Error");
+        return
+      }
+      if(balance < (req.body.amount*100000000)){
+        res.status(400).send('Wallet Balance Low')
+        return
+      }
+      wallet.createTransaction(req.body.toAddr,user.wallet.address,user.wallet.WIF,req.body.amount*100000000,(err,transaction) => {
+        if(err){
+          console.log(err);
+          res.status(400).send(err);
+          return
+        }
+        userService.addTransaction(user.id,transaction,(transactionId)=>{
+          res.status(200).send({msg:'Transaction Added Successfully',transactionId:transactionId,transaction})
+        });
+      })
+
+    });
   }
   getAllUsers(req, res) {
     res.send(UserService.getAllUsers());

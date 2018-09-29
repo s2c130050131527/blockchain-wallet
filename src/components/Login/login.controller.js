@@ -23,8 +23,12 @@ class UserController {
 
         if(!user.walletCreated){
             wallet = walletUtils.createWallet();
-            loginService.addWallet(wallet, req.user.id,(client) => {
-                console.log(client);
+            loginService.addWallet(wallet, parseInt(req.user.id),(err,client) => {
+                if(err){
+                    console.log(err)
+                    res.status(500).send(err);
+                    return;
+                }
                 res.status(200).json({userId:req.user.id,userName:req.userName,token: req.token,wallet :wallet.address});
             });
         }else{
@@ -38,7 +42,7 @@ class UserController {
             return;
         }
         const imgCode = Buffer.from(req.user.qrInfo.qr).toString('base64');
-        res.status(200).send({message: 'Registration Successful', userid: req.user.id, imgCode: imgCode,secret:req.user.qrInfo.secret});
+        res.status(200).send({message: 'Registration Successful', username: req.user.username ,userid: req.user.id, imgCode: imgCode,secret:req.user.qrInfo.secret});
     }
     setuptwoFA(req, res){
         if(req.err) {

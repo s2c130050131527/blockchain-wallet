@@ -21,9 +21,11 @@ class LoginService {
     addWallet(wallet, userId,cb){
       db.db.collection('users').updateOne({id:userId}, {$set: {wallet:wallet,walletCreated:true}},((err,res)=>{
         if(err){
-          res.status(500).send('DB Error');
+          console.log(err)
+          cb(err);
+          return
         }
-        cb(res);
+        cb(null,res);
       }));
     }
   }
