@@ -3,8 +3,7 @@ import wallet from '../../utils/createWallet'
 import userService from './user.service';
 class UserController {
   async getBalance(req, res) {
-    const userObject = req.body;
-    const user = await UserService.findUser(parseInt(userObject.userId));
+    const user = await UserService.findUser(parseInt(req.user.id));
     const address = user.wallet.address;
     const balance = wallet.getBalance(address,(err,balance) => {
       if(err){
@@ -15,9 +14,7 @@ class UserController {
    
   }
   async transfer(req, res) {
-    const userObject = req.body;
-    console.log(userObject);
-    const user = await UserService.findUser(parseInt(userObject.userId));
+    const user = await UserService.findUser(parseInt(req.user.id));
     const address = user.wallet.address;
     wallet.getBalance(address,(err,balance) => {
       console.log(err,balance)

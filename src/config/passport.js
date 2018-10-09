@@ -136,7 +136,6 @@ module.exports = function(passport) {
                     req.err = 'Please Try Registration Again';
                     return done(null,req.err); // req.flash is the way to set flashdata using connect-flash
                 }
-                console.log(password,rows[0].username+ ' '+base32.decode(rows[0].secret_text,true));
                 var isValid = totp.verify(password,base32.decode.asBytes(rows[0].secret_text));
                 console.log(isValid);
                     if(!isValid){

@@ -1,6 +1,6 @@
 var bitcore = require('bitcore-explorers/node_modules/bitcore-lib');
 import explorers from 'bitcore-explorers';
-var insight = new explorers.Insight('testnet');
+var insight = new explorers.Insight();
 import bitcoreAddress from 'bitcoin-address';
 
 class WalletUtils{
@@ -8,7 +8,7 @@ class WalletUtils{
     createWallet(){
         const randomBuffer= bitcore.crypto.Random.getRandomBuffer(32);
         const randomNumber = bitcore.crypto.BN.fromBuffer(randomBuffer);
-        const privateKey = new bitcore.PrivateKey(randomNumber,bitcore.Networks.testnet);
+        const privateKey = new bitcore.PrivateKey(randomNumber);
         const WIF = privateKey.toWIF();
         const address = privateKey.toAddress();
         return {
@@ -32,7 +32,7 @@ class WalletUtils{
     }
 
     createTransaction(toAddr,address,privateKey,amount,cb){
-      if(!bitcoreAddress.validate(toAddr,'testnet')){
+      if(!bitcoreAddress.validate(toAddr ,'mainnet')){
         cb('Address Not Valid',null)
         return;
       }
