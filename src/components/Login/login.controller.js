@@ -29,10 +29,10 @@ class UserController {
                     res.status(500).send(err);
                     return;
                 }
-                res.status(200).json({userId:req.user.id,userName:req.userName,token: req.token,wallet :wallet});
+                res.status(200).json({userId:req.user.id,userName:user.username,token: req.token,wallet :wallet});
             });
         }else{
-            res.status(200).json({userId:req.user.id,userName:req.userName,token: req.token});
+            res.status(200).json({userId:req.user.id,userName:user.username,token: req.token});
         }
        
     }
