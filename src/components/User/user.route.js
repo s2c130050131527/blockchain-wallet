@@ -10,18 +10,22 @@ class UserRouter {
   }
 
   register() {
-    this.router.post('/balance',this.getBalance.bind(this), this.userController.getBalance);
-    this.router.post('/transfer', this.getUser.bind(this),this.userController.transfer);
-    this.router.get('/get/:id', this.getUser.bind(this));
+    this.router.get('/wallets',this.getWallets.bind(this),this.userController.getWallets)
+    this.router.get('/wallets/:coin',this.getBalance.bind(this), this.userController.getBalance);
+    this.router.post('/verify_transfer', this.getTransfer.bind(this),this.userController.transfer);
+    this.router.post('/authorize_transfer', this.getAuthorizeTransfer.bind(this),this.userController.authorizeTransfer);
+  }
+  getWallets(req,res,next){
+    next();
   }
   getBalance(req, res,next) {
    next();
   }
-  getUser(req, res, next) {
+  getTransfer(req, res, next) {
     next();
   }
-  getAllUsers(req, res) {
-    this.userController.getAllUsers(req, res);
+  getAuthorizeTransfer(req, res,next) {
+    next();
   }
 }
 

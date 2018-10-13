@@ -1,76 +1,72 @@
-var bitcore = require('bitcore-explorers/node_modules/bitcore-lib');
-import explorers from 'bitcore-explorers';
-var insight = new explorers.Insight();
-import bitcoreAddress from 'bitcoin-address';
+import CoinList from './CoinList';
+import BTCWalletUtil from './BTCWalletUtils';
+import LTCWalletUtil from './LTCWalletUtils';
 
 class WalletUtils{
     
     createWallet(){
-        const randomBuffer= bitcore.crypto.Random.getRandomBuffer(32);
-        const randomNumber = bitcore.crypto.BN.fromBuffer(randomBuffer);
-        const privateKey = new bitcore.PrivateKey(randomNumber);
-        const WIF = privateKey.toWIF();
-        const address = privateKey.toAddress();
-        return {
-            privateKey:privateKey.toObject(),WIF,address:address.toString()
-        }
+        let walletArray = {};
+        walletArray['BTCTEST']=BTCWalletUtil.createWallet();
+        walletArray['LTCTEST']=LTCWalletUtil.createWallet();
+        return walletArray;
     }
 
-    getBalance(address,cb){
-        console.log('getting balance')
-        let balance = 0;
-        insight.getUnspentUtxos(address,(err,res) => {
-          if(err){
-            cb(err,balance)
-          }
-          console.log(res);
-          res.map(r => {
-            balance += r.satoshis;
-          })
-          cb(err,balance)
-        })
+    async getBalance(coin,address){
+      switch(coin) {
+        case 'BTCTEST':
+          return await BTCWalletUtil.getBalance(address);
+          break;
+        case 'LTCTEST':
+          return await LTCWalletUtil.getBalance(address);
+          break;
+        }
+
     }
 
-    createTransaction(toAddr,address,privateKey,amount,cb){
-      if(!bitcoreAddress.validate(toAddr ,'mainnet')){
-        cb('Address Not Valid',null)
-        return;
-      }
-      insight.getUnspentUtxos(address,(err,utxos) => {
-        if(err){
-          cb(err)
-          return
+    getTotalRecieved(coin,address){
+      console.log('here');
+      console.log(coin);
+      switch(coin) {
+        case 'BTCTEST':
+          return  BTCWalletUtil.getTotalRecieved(address);
+          break;
+        case 'LTCTEST':
+          return LTCWalletUtil.getTotalRecieved(address);
+          break;
+        }  
+    }
+    validateAddress(coin,address){
+      console.log('here');
+      console.log(coin);
+      switch(coin) {
+        case 'BTCTEST':
+          return  BTCWalletUtil.validateAddress(address);
+          break;
+        case 'LTCTEST':
+          return LTCWalletUtil.validateAddress(address);
+          break;
+        }  
+    }
+    getTotalSent(coin,address){
+      switch(coin) {
+        case 'BTCTEST':
+          return BTCWalletUtil.getTotalSent(address);
+          break;
+        case 'LTCTEST':
+          return LTCWalletUtil.getTotalSent(address);
+          break;
         }
-        if (utxos.length == 0) {
-         
-          cb("You don't have enough Satoshis to cover the miner fee.");
-          return;
+    }
+    createTransaction(coin,minerFee,toAddr,address,privateKey,amount,cb){
+      console.log(coin,minerFee,toAddr,address,privateKey,amount)
+      switch(coin) {
+        case 'BTCTEST':
+          return BTCWalletUtil.createTransaction(minerFee*100000000,toAddr,address,privateKey,amount*100000000,cb);
+          break;
+        case 'LTCTEST':
+          return LTCWalletUtil.createTransaction(minerFee*100000000,toAddr,address,privateKey,amount*100000000,cb);
+          break;
         }
-          let bitcore_transaction = new bitcore.Transaction()
-                .from(utxos)
-                .to(toAddr, amount)
-                .change(address)
-                .sign(new bitcore.PrivateKey.fromWIF(privateKey));
-
-          
-          if (bitcore_transaction.getSerializationError()) {
-            let error = bitcore_transaction.getSerializationError().message;
-            switch (error) {
-              case 'Some inputs have not been fully signed':
-                cb('Please check your private key'+error);
-                break;
-              default:
-                cb(error);
-            }
-          }
-          insight.broadcast(bitcore_transaction, function(error, body) {
-            if (error) {
-              cb('Error in broadcast: ' + error);
-            } else {
-              cb(null,body)
-            }
-          });
-      })
     }
 }
 

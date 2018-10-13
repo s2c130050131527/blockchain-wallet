@@ -25,6 +25,8 @@
     "http-errors": "~1.6.2",
     "jade": "~1.11.0",
     "jsonwebtoken": "^8.3.0",
+    "litecore-explorers": "^1.0.1",
+    "memory-cache": "^0.2.0",
     "mongodb": "^3.1.6",
     "morgan": "~1.9.0",
     "mysql": "^2.16.0",
@@ -33,6 +35,8 @@
     "passport-2fa-totp": "^0.0.1",
     "passport-google-oauth": "^1.0.0",
     "passport-local": "^1.0.0",
+    "request": "^2.88.0",
+    "request-promise": "^4.2.2",
     "uuid": "^3.3.2"
   },
   "devDependencies": {

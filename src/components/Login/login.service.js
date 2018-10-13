@@ -13,7 +13,6 @@ class LoginService {
 
     async findUser(userId){
       let user = null;
-      console.log(userId);
       user = await db.db.collection('users').findOne({id:userId});
       return user;
     }
