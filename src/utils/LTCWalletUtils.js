@@ -1,6 +1,6 @@
 var litecore = require('litecore-lib');
 import explorers from 'litecore-explorers';
-var insight = new explorers.Insight('testnet');
+var insight = new explorers.Insight('https://testnet.litecore.io','testnet');
 import request from 'request-promise';
 class LTCWalletUtils{
     
@@ -59,6 +59,7 @@ class LTCWalletUtils{
     }
 
     createTransaction(minerFee,toAddr,address,privateKey,amount,cb){
+      console.log(insight)
       insight.getUtxos(address,(err,utxos) => {
         console.log(utxos);
         if(err){
