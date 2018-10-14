@@ -42,6 +42,49 @@ class UserController {
     res.status(200).send(resBody);
 
   }
+  getTransaction(req,res){
+    const txList = [
+      {
+        txHash:'mccvnsvnskvjsdkcvcjdskdsjkfdsjfkdsjfkdsfjkdsfjdskfjdsfs',
+        mineDate:1543245266432,
+        confirmation:30,
+        type:"Recieved",
+        fee:0.005 ,
+        coin : 'BTCTEST',
+        from : [{
+          address: 'xcxcxcxcmmcmmcmmmcmmcmcmxcsakdas',
+          value:'0.3039'
+        }],
+        to : [{
+          address: 'nananannaananannanjejekdas',
+          value:'0.3039'
+        }]
+      },
+      {
+        txHash:'mccvnsvnskvjsdkcvcjdskdsjkfdsjfkdsjfkdsfjnasksjdskfjdsfs',
+        mineDate:1543245266422,
+        confirmation : 31,
+        type:'Sent',
+        fee:0.0005 ,
+        coin : 'LTCTEST',
+        from : [{
+          address: 'mkr2He92VCkEJ8PzwMgxkLkhNCJG9d8iKV',
+          value:'0.3039'
+        }],
+        to : [{
+          address: 'nananannaananannanjejekdas',
+          value:'0.3039'
+        }]
+      }
+    ]
+
+    res.status(200).send({txList});
+  }
+  getTransactionFilters(req,res){
+    const coins = CoinList.map(coin => coin.symbol);
+    const type=['Any','Recieved','Sent','Confirmed','Unconfirmed'];
+    res.status(200).send({coins,type})
+  }
   async getWallets(req,res){
     const user = await UserService.findUser(parseInt(req.user.id));
     const walletsInfo = [];

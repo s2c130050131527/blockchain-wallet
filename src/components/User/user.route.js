@@ -13,7 +13,11 @@ class UserRouter {
     this.router.get('/wallets',this.getWallets.bind(this),this.userController.getWallets)
     this.router.get('/wallets/:coin',this.getBalance.bind(this), this.userController.getBalance);
     this.router.post('/verify_transfer', this.getTransfer.bind(this),this.userController.transfer);
-    this.router.post('/authorize_transfer', this.getAuthorizeTransfer.bind(this),this.userController.authorizeTransfer);
+    this.router.post('/authorize_transfer', this.getAuthorizeTransfer.bind(this),
+    this.userController.authorizeTransfer);
+    this.router.get('/transaction',this.getTransaction.bind(this),this.userController.getTransaction)
+    this.router.get('/transaction/filters',this.getTransactionFilters.bind(this),this.userController.getTransactionFilters)
+
   }
   getWallets(req,res,next){
     next();
@@ -25,6 +29,12 @@ class UserRouter {
     next();
   }
   getAuthorizeTransfer(req, res,next) {
+    next();
+  }
+  getTransaction(req,res,next){
+    next();
+  }
+  getTransactionFilters(req,res,next){
     next();
   }
 }
