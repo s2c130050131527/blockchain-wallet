@@ -1,6 +1,7 @@
 import express from 'express';
 import LoginRoutes from './Login/login.route';
 import UserRouter from './User/user.route';
+import supportRoute from './Support/support.route';
 const serverSecret = 'simpleServerSecret'
 const expressJwt = require('express-jwt');
 const router = express.Router();
@@ -30,6 +31,10 @@ const initRoute = (app,passport) => {
   const userRoute = express.Router();
   apiRoute.use('/user',authenticate,userRoute);
   new UserRouter(userRoute);
+  
+  const supportRouter = express.Router();
+  apiRoute.use('/support',authenticate,supportRouter);
+  new supportRoute(supportRouter)
 
 
 };

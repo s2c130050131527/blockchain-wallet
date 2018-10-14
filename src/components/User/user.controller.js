@@ -82,6 +82,7 @@ class UserController {
   }
   getTransactionFilters(req,res){
     const coins = CoinList.map(coin => coin.symbol);
+    coins.unshift(['All']);
     const type=['Any','Recieved','Sent','Confirmed','Unconfirmed'];
     res.status(200).send({coins,type})
   }
