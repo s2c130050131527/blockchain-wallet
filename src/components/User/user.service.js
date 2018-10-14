@@ -28,9 +28,9 @@ class UserService {
     }
     getTotalSent(address,coin){
       return wallet.getTotalSent(coin,address)
-     
+
     }
-    
+
     async findUser(userId){
       let user = null;
       user = await db.db.collection('users').findOne({id:userId});
@@ -69,11 +69,53 @@ class UserService {
         });
         }
       });
-      
+
     }
     getAllUsers() {
       return this.users;
     }
+
+    transformTransaction(txn, coin, userAddress) {
+      let obj = {};
+      obj.txHash = txn.txid;
+      obj.fee = txn.fees;
+      obj.mineDate = txn.time;
+      obj.confirmation = txn.confirmations;
+      obj.coin = coin;
+      obj.from = [];
+      obj.to = [];
+      let fromAddresses = txn.vin;
+      let toAddresses = txn.vout;
+      let receivedTag;
+      let sentTag;
+      for (let p = 0; p < fromAddresses.length; p++) {
+        let addObj = {};
+        addObj.address = fromAddresses[p].addr;
+        if (addObj.address === userAddress) {
+          receivedTag = true;
+        }
+        addObj.value = fromAddresses[p].value;
+        obj.from.push(addObj);
+      }
+      for (let p = 0; p < toAddresses.length; p++) {
+        let addObj = {};
+        addObj.address = toAddresses[p].scriptPubKey.addresses[0];
+        if (addObj.address === userAddress) {
+          sentTag = true;
+        }
+        addObj.value = toAddresses[p].value;
+        obj.to.push(addObj);
+      }
+      if (receivedTag) {
+        obj.type = "Recieved";
+      } else if(sentTag) {
+        obj.type = "Sent";
+      } else {
+        obj.type = "Unknown";
+      }
+      return obj;
+    }
+
 }
 
 export default new UserService();
