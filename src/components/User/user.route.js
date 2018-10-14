@@ -16,7 +16,8 @@ class UserRouter {
     this.router.post('/authorize_transfer', this.getAuthorizeTransfer.bind(this),
     this.userController.authorizeTransfer);
     this.router.get('/transaction',this.getTransaction.bind(this),this.userController.getTransaction)
-    this.router.get('/transaction/filters',this.getTransactionFilters.bind(this),this.userController.getTransactionFilters)
+    this.router.get('/transaction/filters',this.getTransactionFilters.bind(this),this.userController.getTransactionFilters);
+    this.router.post('/language',this.getWallets.bind(this),this.userController.setLanguage);
 
   }
   getWallets(req,res,next){

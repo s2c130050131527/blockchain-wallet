@@ -31,6 +31,16 @@ class UserService {
      
     }
     
+    updateCurrency(userId,newCurrency,cb){
+      db.db.collection('users').updateOne({id:userId}, {$set: {currency:newCurrency}},((err,res)=>{
+        if(err){
+          console.log(err)
+          cb(err);
+          return
+        }
+        cb(null,res);
+      }));
+    }
     async findUser(userId){
       let user = null;
       user = await db.db.collection('users').findOne({id:userId});

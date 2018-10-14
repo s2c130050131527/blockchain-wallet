@@ -4,6 +4,7 @@ import userService from './user.service';
 import CoinList from '../../utils/CoinList';
 import cache from 'memory-cache';
 import uuidv4 from 'uuid/v4';
+import flatFist from '../../utils/FlatList';
 var totp = require('notp').totp;
 var base32 = require('hi-base32');
 
@@ -11,6 +12,7 @@ class UserController {
   async getBalance(req, res) {
     const user = await UserService.findUser(parseInt(req.user.id));
     const address = user.wallet[req.params.coin].address;
+    console.log(user.currency);
     const CoinSymbol = CoinList.map(e => {
       return e.symbol;
     });
@@ -27,11 +29,12 @@ class UserController {
     resBody.address = address;
     const balanceRes = await UserService.getBalance(req.params.coin, address);
     resBody.balance = (balanceRes.confirmBalance + balanceRes.unconfirmedBalance);
-    const flatCurrency = 'INR'
+    const flatCurrency = user.currency[0].currency;
+    console.log(flatCurrency)
     resBody.exchangeRate = await UserService.getExchangeRate(req.params.coin,flatCurrency);
     resBody.flatBalance = resBody.balance * resBody.exchangeRate;
     resBody.flatCurrency = flatCurrency;
-    resBody.flatSymbol = '₹'
+    resBody.flatSymbol = user.currency[0].symbol;
     resBody.totalMoneySent = await userService.getTotalSent(address,req.params.coin);
     resBody.totalMoneyRecieved = await userService.getTotalRecieved(address,req.params.coin);
     }catch(err){
@@ -99,7 +102,7 @@ class UserController {
         const balanceRes = await userService.getBalance(coin.symbol,wallet.address);
         coinRes.balance = (balanceRes.confirmBalance + balanceRes.unconfirmedBalance)
         coinRes.confirmBalance = balanceRes.confirmBalance;
-        coinRes.flatCurrency = 'INR';
+        coinRes.flatCurrency = user.currency[0].currency;
         coinRes.exchangeRate = await userService.getExchangeRate(coin.symbol,coinRes.flatCurrency);
         coinRes.balanceInCurrency = coinRes.exchangeRate * coinRes.balance;
         totalBalance += coinRes.balanceInCurrency;
@@ -107,15 +110,27 @@ class UserController {
         totalRecieved += await userService.getTotalRecieved(wallet.address,coin.symbol) * coinRes.exchangeRate;
         walletsInfo.push(coinRes);
       }))
-      let resBody = {coinList: walletsInfo, totalSent,totalRecieved,totalBalance,flatSymbol: '₹'}
+      let resBody = {coinList: walletsInfo, totalSent,totalRecieved,totalBalance,flatSymbol: user.currency[0].symbol}
       res.status(200).send(resBody);
     
     }catch(err){
       console.log(err);
       res.status(400).send(err.response);
     }
-    
-
+  }
+  async setLanguage(req,res){
+    const user = await UserService.findUser(parseInt(req.user.id));
+    const newCurrency = flatFist.filter(el=> {
+      return req.body.data === el.currency
+    });
+    userService.updateCurrency(user.id,newCurrency,(err,response)=> {
+      if(err){
+        res.status(400).send('Something Went Wrong');
+        return
+      }
+      res.status(200).send({message:'Done',
+      newCurrency})
+    })
   }
   async transfer(req, res) {
     const user = await UserService.findUser(parseInt(req.user.id));

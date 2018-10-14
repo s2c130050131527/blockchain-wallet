@@ -10,6 +10,11 @@ class SupportRouter {
 
   register() {
     this.router.post('/',this.supportUser.bind(this),this.supportController.getsupportUser);
+    this.router.get('/languages',this.languageSupport.bind(this),this.supportController.getLanguageSupport);
+
+  }
+  languageSupport(req, res,next){
+    next();
   }
   supportUser(req, res,next){
     next();
