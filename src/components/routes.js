@@ -2,6 +2,7 @@ import express from 'express';
 import LoginRoutes from './Login/login.route';
 import UserRouter from './User/user.route';
 import supportRoute from './Support/support.route';
+import TrendsRouter from './Trends/trends.route';
 const serverSecret = 'simpleServerSecret'
 const expressJwt = require('express-jwt');
 const router = express.Router();
@@ -37,5 +38,9 @@ const initRoute = (app,passport) => {
   new supportRoute(supportRouter)
 
 
+  const trendsRoute = express.Router();
+  apiRoute.use('/trends',trendsRoute);
+  new TrendsRouter(trendsRoute);
 };
+
 export default initRoute;
