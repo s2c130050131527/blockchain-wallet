@@ -101,7 +101,7 @@ class UserService {
       for (let p = 0; p < fromAddresses.length; p++) {
         let addObj = {};
         addObj.address = fromAddresses[p].addr;
-        if (addObj.address === userAddress) {
+        if (addObj.address !== userAddress) {
           receivedTag = true;
         }
         addObj.value = fromAddresses[p].value;
