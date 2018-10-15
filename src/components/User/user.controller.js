@@ -2,9 +2,11 @@ import UserService from './user.service';
 import wallet from '../../utils/createWallet'
 import userService from './user.service';
 import CoinList from '../../utils/CoinList';
+import TransactionsUtils from '../../utils/transactionUtils';
 import cache from 'memory-cache';
 import uuidv4 from 'uuid/v4';
 import flatFist from '../../utils/FlatList';
+import request from "request-promise";
 var totp = require('notp').totp;
 var base32 = require('hi-base32');
 
@@ -45,48 +47,59 @@ class UserController {
     res.status(200).send(resBody);
 
   }
-  getTransaction(req,res){
-    const txList = [
-      {
-        txHash:'mccvnsvnskvjsdkcvcjdskdsjkfdsjfkdsjfkdsfjkdsfjdskfjdsfs',
-        mineDate:1543245266432,
-        confirmation:30,
-        type:"Recieved",
-        fee:0.005 ,
-        coin : 'BTCTEST',
-        from : [{
-          address: 'xcxcxcxcmmcmmcmmmcmmcmcmxcsakdas',
-          value:'0.3039'
-        }],
-        to : [{
-          address: 'nananannaananannanjejekdas',
-          value:'0.3039'
-        }]
-      },
-      {
-        txHash:'mccvnsvnskvjsdkcvcjdskdsjkfdsjfkdsjfkdsfjnasksjdskfjdsfs',
-        mineDate:1543245266422,
-        confirmation : 31,
-        type:'Sent',
-        fee:0.0005 ,
-        coin : 'LTCTEST',
-        from : [{
-          address: 'mkr2He92VCkEJ8PzwMgxkLkhNCJG9d8iKV',
-          value:'0.3039'
-        }],
-        to : [{
-          address: 'nananannaananannanjejekdas',
-          value:'0.3039'
-        }]
-      }
-    ]
 
+  async getTransaction(req,res){
+    const user = await UserService.findUser(parseInt(req.user.id));
+    let CoinSymbol = CoinList.map(e => {
+      return e.symbol;
+    });
+    let reqQuery = req.query || {};
+    reqQuery.coin = reqQuery.coin || "All";
+    console.log(reqQuery);
+    let coins = (reqQuery.coin === "All" || !reqQuery.coin) ? CoinSymbol : reqQuery.coin;
+    console.log(coins)
+    if (typeof(coins)==='string') {
+      coins = [coins];
+    }
+    let addresses = {};
+    for (let k = 0; k < coins.length; k++) {
+      if (CoinSymbol.indexOf(coins[k]) === -1) {
+        res.status(404).send({
+          message:'We do not support the requested coin'
+        });
+        return;
+      }
+      addresses[coins[k]] = user.wallet[coins[k]].address;
+    }
+    let txList = [];
+    for (let i = 0; i < coins.length; i++) {
+      let options = {
+        method: 'GET',
+        uri: TransactionsUtils.sources()[coins[i]].replace(/ADDRESS/g, addresses[coins[i]]),
+        json: true,
+      }
+      let txs = await request(options);
+      console.log(txs);
+      txs.txs.forEach((txn) => {
+        let transformedTxn = UserService.transformTransaction(txn, coins[i], addresses[coins[i]]);
+        console.log(transformedTxn);
+        console.log( (reqQuery.type && transformedTxn.type === reqQuery.type))
+        if (reqQuery.type === "All" ||
+          (reqQuery.type && transformedTxn.type === reqQuery.type)) {
+          txList.push(transformedTxn)
+        }
+      })
+    }
+    txList = txList.sort((a,b) => {
+      a.mineDate - b.mineDate;
+    })
     res.status(200).send({txList});
   }
+
   getTransactionFilters(req,res){
     const coins = CoinList.map(coin => coin.symbol);
     coins.unshift(['All']);
-    const type=['Any','Recieved','Sent','Confirmed','Unconfirmed'];
+    const type=['All','Recieved','Sent','Confirmed','Unconfirmed'];
     res.status(200).send({coins,type})
   }
   async getWallets(req,res){
@@ -112,7 +125,7 @@ class UserController {
       }))
       let resBody = {coinList: walletsInfo, totalSent,totalRecieved,totalBalance,flatSymbol: user.currency[0].symbol}
       res.status(200).send(resBody);
-    
+
     }catch(err){
       console.log(err);
       res.status(400).send(err.response);
@@ -134,9 +147,9 @@ class UserController {
   }
   async transfer(req, res) {
     const user = await UserService.findUser(parseInt(req.user.id));
-    // const minerFee = user.wallet[req.body.coin].minerFee;   
+    // const minerFee = user.wallet[req.body.coin].minerFee;
     console.log(req.user,req.body);
-    const minerFee = 0.0005 
+    const minerFee = 0.0005
     console.log(user.wallet)
     const amount = parseFloat(req.body.amount);
     const address = req.body.toAddr;
@@ -169,12 +182,12 @@ class UserController {
     };
     txObject.coin = coin;
     txObject.toAddr= address;
-    txObject.amountRequested = amount              
+    txObject.amountRequested = amount
     txObject.amountRequestedFlat= amount * exchangeRate;
     txObject.minerFee= minerFee
     txObject.minerFeeFlat= minerFee*exchangeRate;
     txObject.balance= totalBalance;
-    txObject.balanceFlat= totalBalance * exchangeRate; 
+    txObject.balanceFlat= totalBalance * exchangeRate;
     txObject.newBalance= totalBalance - amount - minerFee;
     txObject.newBalanceFlat= txObject.newBalance * exchangeRate;
     txObject.flatSymbol = flatSymbol,
