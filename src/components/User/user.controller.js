@@ -115,6 +115,13 @@ class UserController {
         coinRes.balance = (balanceRes.confirmBalance + balanceRes.unconfirmedBalance)
         coinRes.confirmBalance = balanceRes.confirmBalance;
         coinRes.flatCurrency = user.currency[0].currency;
+        let options = {
+          method: 'GET',
+          uri: TransactionsUtils.sources()[coin.symbol].replace(/ADDRESS/g, wallet.address),
+          json: true,
+        }
+        let txs = await request(options);
+        coinRes.txs = txs.length;
         coinRes.exchangeRate = await userService.getExchangeRate(coin.symbol,coinRes.flatCurrency);
         coinRes.balanceInCurrency = coinRes.exchangeRate * coinRes.balance;
         totalBalance += coinRes.balanceInCurrency;
