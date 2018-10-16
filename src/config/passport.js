@@ -73,11 +73,10 @@ module.exports = function(passport) {
 
     passport.use(
         'local-login',
-        new TwoFA({
+        new LocalStrategy({
             // by default, local strategy uses username and password, we will override with email
             usernameField : 'username',
             passwordField : 'password',
-            codeField: 'authToken',
             passReqToCallback: true
         },
         function(req, username, password, done) { // callback with email and password from our form
@@ -104,6 +103,13 @@ module.exports = function(passport) {
                     req.err = 'Please complete Registration'
                     return done(null,req.err);
                 }
+
+                var isValid = totp.verify(req.body.authToken,base32.decode.asBytes(rows[0].secret_text));
+                    if(!isValid){
+                        console.log(3);
+                        req.err = 'Auth Token Invalid';
+                        return done(null, req.err);
+                    }
 
                 return done(null,rows[0])
             });
