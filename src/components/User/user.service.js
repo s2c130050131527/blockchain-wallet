@@ -1,6 +1,7 @@
 import db from '../../database';
 import request from "request-promise";
 import wallet from '../../utils/createWallet'
+import transactionUtils from '../../utils/transactionUtils'
 class UserService {
     'use strict'
 
@@ -85,6 +86,32 @@ class UserService {
       return this.users;
     }
 
+    filterTransactions(txns, filter) {
+      let finalTxns = [];
+      let filterFlag = true;
+      let typeFilter = transactionUtils.typeFilter();
+      let confirmStatusFilter = transactionUtils.confirmStatusFilter();
+      for (let k = 0; k < txns.length; k++) {
+          if (filter.type && filter.type !== typeFilter.default && txns[k].type !== filter.type) {
+            filterFlag = false;
+          }
+          if (filter.confirmStatus && filter.confirmStatus !== confirmStatusFilter.default) {
+            if (filter.confirmStatus === confirmStatusFilter.confirmed &&
+                txns[k].confirmation < 6) {
+              filterFlag = false;
+            }
+            if (filter.confirmStatus === confirmStatusFilter.unconfirmed &&
+                txns[k].confirmation >= 6) {
+              filterFlag = false;
+            }
+          }
+          if (filterFlag) {
+            finalTxns.push(txns[k]);
+          }
+      }
+      return finalTxns;
+    }
+
     transformTransaction(txn, coin, userAddress) {
       let obj = {};
       obj.txHash = txn.txid;
@@ -117,7 +144,7 @@ class UserService {
         obj.to.push(addObj);
       }
       if (receivedTag) {
-        obj.type = "Recieved";
+        obj.type = "Received";
       } else if(sentTag) {
         obj.type = "Sent";
       } else {

@@ -72,6 +72,10 @@ class UserController {
       addresses[coins[k]] = user.wallet[coins[k]].address;
     }
     let txList = [];
+    let txFilters = {
+      "type": reqQuery.type || "All",
+      "confirmStatus": reqQuery.confirmStatus || "Any"
+    }
     for (let i = 0; i < coins.length; i++) {
       let options = {
         method: 'GET',
@@ -82,12 +86,7 @@ class UserController {
       console.log(txs);
       txs.txs.forEach((txn) => {
         let transformedTxn = UserService.transformTransaction(txn, coins[i], addresses[coins[i]]);
-        console.log(transformedTxn);
-        console.log( (reqQuery.type && transformedTxn.type === reqQuery.type))
-        if (reqQuery.type === "All" ||
-          (reqQuery.type && transformedTxn.type === reqQuery.type)) {
-          txList.push(transformedTxn)
-        }
+        txList = txList.concat(UserService.filterTransactions([transformedTxn], txFilters));
       })
     }
     txList = txList.sort((a,b) => {
