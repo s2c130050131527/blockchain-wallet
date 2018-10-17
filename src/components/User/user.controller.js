@@ -121,7 +121,7 @@ class UserController {
           json: true,
         }
         let txs = await request(options);
-        coinRes.txs = txs.length;
+        coinRes.txs = txs.txs.length;
         coinRes.exchangeRate = await userService.getExchangeRate(coin.symbol,coinRes.flatCurrency);
         coinRes.balanceInCurrency = coinRes.exchangeRate * coinRes.balance;
         totalBalance += coinRes.balanceInCurrency;
