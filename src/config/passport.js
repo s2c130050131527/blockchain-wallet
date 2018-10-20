@@ -12,8 +12,10 @@ var dbconfig = require('../mysql-database');
 var connection = mysql.createConnection(dbconfig.connection);
 var GoogleAuthenticator = require('passport-2fa-totp').GoogeAuthenticator;
 var TwoFA = require('passport-2fa-totp').Strategy;
+var CustomStrategy = require('passport-custom').Strategy;
 var totp = require('notp').totp;
 var base32 = require('hi-base32');
+import Messager from '../utils/messager';
 
 connection.query('USE ' + dbconfig.database);
 module.exports = function(passport) {
@@ -128,7 +130,7 @@ module.exports = function(passport) {
                 passwordField: 'authCode',
             passReqToCallback: true
         },
-        function(req, username,password, done) { 
+        function(req, username,password, done) {
             connection.query("SELECT * FROM users WHERE id = ?",[username], function(err, rows){
                 console.log(1);
                 if (err)
@@ -149,7 +151,36 @@ module.exports = function(passport) {
                         req.err = 'Auth Token Invalid';
                         return done(null, req.err);
                     }
-                
+
+                connection.query('UPDATE users set twofa_setup=true where id=?',[username],function(err,res){
+                    return done(null, rows[0]);
+                });
+            });
+        })
+    );
+
+    passport.use(
+        'otp-auth',
+        new CustomStrategy(function(req, done) {
+            let username = req.query.username;
+            let otp = req.query.otp;
+            connection.query("SELECT * FROM users WHERE id = ?",[username], function(err, rows){
+                if (err) {
+                    req.err = 'Server Error';
+                    return done(err);
+                }
+                if (!rows.length) {
+                    req.err = 'Please Try Registration Again';
+                    return done(null,req.err); // req.flash is the way to set flashdata using connect-flash
+                }
+                let user = rows[0];
+                let mobileNumber = user.phone_number;
+                let verifyOTP = Messager.verifyOTPMobile(mobileNumber, otp);
+                if (!verifyOTP.isVerified) {
+                    req.err = 'OTP Invalid';
+                    return done(null, req.err);
+                }
+
                 connection.query('UPDATE users set twofa_setup=true where id=?',[username],function(err,res){
                     return done(null, rows[0]);
                 });

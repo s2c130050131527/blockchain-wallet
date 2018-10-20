@@ -14,6 +14,7 @@ CREATE TABLE `' + dbconfig.database + '`.`' + dbconfig.users_table + '` ( \
     `id` INT UNSIGNED NOT NULL AUTO_INCREMENT, \
     `username` VARCHAR(20) NOT NULL, \
     `password` CHAR(60) NOT NULL, \
+    `phone_number` CHAR(60) NOT NULL, \
     `secret_text` CHAR(80) NOT NULL, \
     `svg_img` TEXT NOT NULL, \
     `twofa_setup` BOOLEAN default false,\
