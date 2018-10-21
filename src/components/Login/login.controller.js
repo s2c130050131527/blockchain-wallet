@@ -2,12 +2,22 @@ const jwt = require('jsonwebtoken');
 const serverSecret = 'simpleServerSecret';
 import loginService from './login.service';
 import walletUtils from '../../utils/createWallet';
+import flatFist from '../../utils/FlatList';
 
 class UserController {
   
     async loginUser(req, res){
         if(req.err) {
             res.status(400).send({message:req.err});
+            return;
+        }
+        res.status(200).send({userId:req.user.id, timestamp: new Date().getTime()+60*2*1000});
+       
+       
+    }
+    async verifyLoginOTP(req,res){
+        if(req.err){
+            res.status(400).send({message:req.err})
             return;
         }
         req.token = jwt.sign(
@@ -18,6 +28,7 @@ class UserController {
         const user = await loginService.findUser(req.user.id);
         if(!user){
             res.status(400).send('Not a valid user');
+            return;
         }
         let wallet = null;
 
@@ -34,15 +45,13 @@ class UserController {
         }else{
             res.status(200).json({userId:req.user.id,userName:user.username,token: req.token});
         }
-       
     }
     registerUser(req, res){
         if(req.err) {
             res.status(400).send({message: req.err});
             return;
         }
-        const imgCode = Buffer.from(req.user.qrInfo.qr).toString('base64');
-        res.status(200).send({message: 'Registration Successful', username: req.user.username ,userid: req.user.id, imgCode: imgCode,secret:req.user.qrInfo.secret});
+        res.status(200).send({message: 'Registration Successful', username: req.user.username ,userid: req.user.id,timestamp:req.user.timestamp});
     }
     setuptwoFA(req, res){
         if(req.err) {
@@ -51,6 +60,8 @@ class UserController {
             return;
         }
         req.user.walletCreated =false;
+        req.user.currency = [];
+        req.user.currency.push(flatFist[0]);
         loginService.addUser(req.user);
         res.status(200).send({message: 'Signup Successful', userid: req.user.id});
     }

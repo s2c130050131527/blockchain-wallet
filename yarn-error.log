@@ -1,5 +1,5 @@
 Arguments: 
-  /usr/local/bin/node /home/shrey.naygandhi/.yarn/bin/yarn.js add request
+  /usr/local/bin/node /home/shrey.naygandhi/.yarn/bin/yarn.js
 
 PATH: 
   /home/shrey.naygandhi/.yarn/bin:/home/shrey.naygandhi/.config/yarn/global/node_modules/.bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/usr/lib/jvm/java-8-oracle/bin:/usr/lib/jvm/java-8-oracle/db/bin:/usr/lib/jvm/java-8-oracle/jre/bin:/home/shrey.naygandhi/npm/bin
@@ -14,7 +14,7 @@ Platform:
   linux x64
 
 Trace: 
-  Error: EACCES: permission denied, mkdir '/home/shrey.naygandhi/Downloads/personal/Common Wallet/Common Wallet/testwallet/node_modules/readdirp/test/bed'
+  Error: EACCES: permission denied, mkdir '/home/shrey.naygandhi/Downloads/personal/Common Wallet/Common Wallet/testwallet/node_modules/babel-runtime/node_modules'
 
 npm manifest: 
   {
@@ -44,14 +44,20 @@ npm manifest:
       "http-errors": "~1.6.2",
       "jade": "~1.11.0",
       "jsonwebtoken": "^8.3.0",
+      "litecore-explorers": "^1.0.1",
+      "memory-cache": "^0.2.0",
       "mongodb": "^3.1.6",
       "morgan": "~1.9.0",
       "mysql": "^2.16.0",
+      "nodemailer": "^4.6.8",
       "notp": "^2.0.3",
       "passport": "^0.4.0",
       "passport-2fa-totp": "^0.0.1",
+      "passport-custom": "^1.0.5",
       "passport-google-oauth": "^1.0.0",
       "passport-local": "^1.0.0",
+      "request": "^2.88.0",
+      "request-promise": "^4.2.2",
       "uuid": "^3.3.2"
     },
     "devDependencies": {
@@ -3873,7 +3879,7 @@ Lockfile:
     dependencies:
       is-finite "^1.0.0"
   
-  request@^2.51.0:
+  request@^2.51.0, request@^2.88.0:
     version "2.88.0"
     resolved "https://registry.yarnpkg.com/request/-/request-2.88.0.tgz#9c2fca4f7d35b592efe57c7f0a55e81052124fef"
     dependencies:

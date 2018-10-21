@@ -2,6 +2,7 @@ import request from "request-promise";
 const messageEngineLink = process.env.OTP_URL;
 const authKey = process.env.OTP_AUTH_KEY;
 const otpExpiryMin = process.env.OTP_EXPIRY_MIN;
+console.log(authKey);
 class Messager {
   generateOTP(otpLen) {
     let otp = '';
@@ -15,7 +16,7 @@ class Messager {
       method: 'GET',
       uri: messageEngineLink + `sendotp.php`,
       qs: {
-        authKey: authKey,
+        authkey: authKey,
         message: message,
         sender: sender,
         mobile: mobileNumber,
@@ -24,6 +25,7 @@ class Messager {
       },
       json: true
     }
+    console.log(options)
     let sendOTPResponse = await request(options);
     return sendOTPResponse;
   }
@@ -32,7 +34,7 @@ class Messager {
       method: 'GET',
       uri: messageEngineLink + `verifyRequestOTP.php`,
       qs: {
-        authKey: authKey,
+        authkey: authKey,
         mobile: mobileNumber,
         otp: otp,
       },

@@ -56,16 +56,19 @@ module.exports = function(passport) {
                     var newUserMysql = {
                         username: username,
                         password: bcrypt.hashSync(password, null, null),
-                        qrInfo:  GoogleAuthenticator.register(username),
+                        OTP:  Messager.generateOTP(6),
+                        timestamp: new Date().getTime() + 60 * 3 * 1000,
                         twoFASetup: false
                     };
+                    var insertQuery = "INSERT INTO users ( username, password,phone_number,OTP,timestamp,twofa_setup ) values (?,?,?,?,?,?)";
 
-                    const imgCode = Buffer.from(newUserMysql.qrInfo.qr).toString('base64');
-
-                    var insertQuery = "INSERT INTO users ( username, password,secret_text,svg_img,twofa_setup ) values (?,?,?,?,?)";
-
-                    connection.query(insertQuery,[newUserMysql.username, newUserMysql.password,newUserMysql.qrInfo.secret,imgCode,newUserMysql.twoFASetup],function(err, rows) {
+                    connection.query(insertQuery,[newUserMysql.username, newUserMysql.password,req.body.email,newUserMysql.OTP,newUserMysql.timestamp,newUserMysql.twoFASetup],async function(err, rows) {
+                            if(err){
+                                console.log(err);
+                                return done('Cannot get DB. Please Try after sometime');
+                            }
                         newUserMysql.id = rows.insertId;
+                        console.log(await Messager.sendOTPMobile(req.body.email,'KOINTL','Complete Registration using '+newUserMysql.OTP ,newUserMysql.OTP));
                         return done(null, newUserMysql);
                     });
                 }
@@ -106,82 +109,76 @@ module.exports = function(passport) {
                     return done(null,req.err);
                 }
 
-                var isValid = totp.verify(req.body.authToken,base32.decode.asBytes(rows[0].secret_text));
-                    if(!isValid){
-                        console.log(3);
-                        req.err = 'Auth Token Invalid';
-                        return done(null, req.err);
-                    }
+                const OTP = Messager.generateOTP(6);
+
+                Messager.sendOTPMobile(rows[0].phone_number,'KOINTL','Please Login using '+ OTP ,OTP)
 
                 return done(null,rows[0])
             });
-        },
-        function(req,user,done){
-            var secret = GoogleAuthenticator.decodeSecret(user.secret_text);
-            done(null, secret,30);
         })
     );
 
-    passport.use(
-        'two-fa',
-        new LocalStrategy({
-            // by default, local strategy uses username and password, we will override with email
-                usernameField: 'userId',
-                passwordField: 'authCode',
-            passReqToCallback: true
-        },
-        function(req, username,password, done) {
-            connection.query("SELECT * FROM users WHERE id = ?",[username], function(err, rows){
-                console.log(1);
-                if (err)
-                    {
-                    console.log(2);
-                    req.err = 'Server Error';
-                    return done(err);
-                    }
-                if (!rows.length) {
-                    console.log(3);
-                    req.err = 'Please Try Registration Again';
-                    return done(null,req.err); // req.flash is the way to set flashdata using connect-flash
-                }
-                var isValid = totp.verify(password,base32.decode.asBytes(rows[0].secret_text));
-                console.log(isValid);
-                    if(!isValid){
-                        console.log(3);
-                        req.err = 'Auth Token Invalid';
-                        return done(null, req.err);
-                    }
+    // passport.use(
+    //     'two-fa',
+    //     new LocalStrategy({
+    //         // by default, local strategy uses username and password, we will override with email
+    //             usernameField: 'userId',
+    //             passwordField: 'authCode',
+    //         passReqToCallback: true
+    //     },
+    //     function(req, username,password, done) {
+    //         connection.query("SELECT * FROM users WHERE id = ?",[username], function(err, rows){
+    //             console.log(1);
+    //             if (err)
+    //                 {
+    //                 console.log(2);
+    //                 req.err = 'Server Error';
+    //                 return done(err);
+    //                 }
+    //             if (!rows.length) {
+    //                 console.log(3);
+    //                 req.err = 'Please Try Registration Again';
+    //                 return done(null,req.err); // req.flash is the way to set flashdata using connect-flash
+    //             }
+    //             var isValid = totp.verify(password,base32.decode.asBytes(rows[0].secret_text));
+    //             console.log(isValid);
+    //                 if(!isValid){
+    //                     console.log(3);
+    //                     req.err = 'Auth Token Invalid';
+    //                     return done(null, req.err);
+    //                 }
 
-                connection.query('UPDATE users set twofa_setup=true where id=?',[username],function(err,res){
-                    return done(null, rows[0]);
-                });
-            });
-        })
-    );
+    //             connection.query('UPDATE users set twofa_setup=true where id=?',[username],function(err,res){
+    //                 return done(null, rows[0]);
+    //             });
+    //         });
+    //     })
+    // );
 
     passport.use(
         'otp-auth',
         new CustomStrategy(function(req, done) {
-            let username = req.query.username;
-            let otp = req.query.otp;
-            connection.query("SELECT * FROM users WHERE id = ?",[username], function(err, rows){
+            let userid = req.body.userId;
+            let otp = req.body.authCode;
+            connection.query("SELECT * FROM users WHERE id = ?",[userid],async function(err, rows){
                 if (err) {
                     req.err = 'Server Error';
                     return done(err);
                 }
                 if (!rows.length) {
                     req.err = 'Please Try Registration Again';
-                    return done(null,req.err); // req.flash is the way to set flashdata using connect-flash
+                    return done(req.err); // req.flash is the way to set flashdata using connect-flash
                 }
                 let user = rows[0];
                 let mobileNumber = user.phone_number;
-                let verifyOTP = Messager.verifyOTPMobile(mobileNumber, otp);
-                if (!verifyOTP.isVerified) {
+                let verifyOTP = await Messager.verifyOTPMobile(mobileNumber, otp);
+                console.log(verifyOTP);
+                if (verifyOTP.message !== 'otp_verified') {
                     req.err = 'OTP Invalid';
                     return done(null, req.err);
                 }
 
-                connection.query('UPDATE users set twofa_setup=true where id=?',[username],function(err,res){
+                connection.query('UPDATE users set twofa_setup=true where id=?',[userid],function(err,res){
                     return done(null, rows[0]);
                 });
             });

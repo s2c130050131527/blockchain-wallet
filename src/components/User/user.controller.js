@@ -7,6 +7,7 @@ import cache from 'memory-cache';
 import uuidv4 from 'uuid/v4';
 import flatFist from '../../utils/FlatList';
 import request from "request-promise";
+import messager from '../../utils/messager';
 var totp = require('notp').totp;
 var base32 = require('hi-base32');
 
@@ -98,7 +99,7 @@ class UserController {
   getTransactionFilters(req,res){
     const coins = CoinList.map(coin => coin.symbol);
     coins.unshift(['All']);
-    const type=['All','Recieved','Sent','Confirmed','Unconfirmed'];
+    const type=['All','Recieved','Sent'];
     res.status(200).send({coins,type})
   }
   async getWallets(req,res){
@@ -198,12 +199,14 @@ class UserController {
     txObject.newBalanceFlat= txObject.newBalance * exchangeRate;
     txObject.flatSymbol = flatSymbol,
     txObject.flatCurrency=flatCurrency;
+    txObject.OTP = messager.generateOTP(6);
     if(amount + minerFee <= (balanceRes.confirmBalance) )
     {
       cache.put(txObject.transactionId, {
         userId: req.user.id,
         ...txObject
       },1000* 60 * 3);
+      await messager.sendOTPMobile(user.phone_number,'KOINTL','Please Complete transaction using '+txObject.OTP,txObject.OTP);
       res.status(200).send(txObject);
       return;
     } else {
@@ -224,9 +227,10 @@ class UserController {
       res.status(401).send('You are not Authorized to perform this transaction');
       return
     }
-    const authToken = totp.verify(authCode,base32.decode.asBytes(user.secret_text));
-    if(!authToken){
-      res.status(401).send('You are not Authorized to perform this transaction');
+    const verifyOTP = await messager.verifyOTPMobile(user.phone_number,authCode);
+    const authToken = verifyOTP.message;
+    if(authToken !== 'otp_verified'){
+      res.status(401).send('Invalid OTP');
       cache.del(transactionId);
       return;
     }

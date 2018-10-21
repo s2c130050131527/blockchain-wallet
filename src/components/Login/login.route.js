@@ -13,9 +13,15 @@ class LoginRouter {
     this.router.post('/login',this.loginUser.bind(this), this.passport.authenticate('local-login', {
       session:false
       }),this.loginController.loginUser);
+    this.router.post('/verifyLoginOTP',this.loginOTP.bind(this),this.passport.authenticate('otp-auth',{
+      session:false
+    }),this.loginController.verifyLoginOTP);
     this.router.post('/register', this.registerUser.bind(this), this.passport.authenticate('local-signup',{session:false}),this.loginController.registerUser);
-    this.router.post('/setuptwofa', this.setuptwoFA.bind(this),this.passport.authenticate('two-fa',{session:false}),this.loginController.setuptwoFA);
+    this.router.post('/setuptwofa', this.setuptwoFA.bind(this),this.passport.authenticate('otp-auth',{session:false}),this.loginController.setuptwoFA);
     this.router.post('/getqr',this.getQR.bind(this));
+  }
+  loginOTP(req,res,next){
+    next();
   }
   loginUser(req, res,next){
     next();
