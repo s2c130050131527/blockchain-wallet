@@ -27,7 +27,7 @@ function handleDisconnect() {
         setTimeout(handleDisconnect, 2000); // We introduce a delay before attempting to reconnect,
       }                                     // to avoid a hot loop, and to allow our node script to
     });                                     // process asynchronous requests in the meantime.
-                                            // If you're also serving http, display a 503 error.
+    connection.query('use sslwallet');                                   // If you're also serving http, display a 503 error.
     connection.on('error', function(err) {
       console.log('db error', err);
       if(err.code === 'PROTOCOL_CONNECTION_LOST') { // Connection to the MySQL server is usually
