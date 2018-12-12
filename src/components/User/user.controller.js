@@ -122,8 +122,8 @@ class UserController {
           json: true,
         }
         let txs = await request(options);
-        // console.log(txs.transactions.length,coin.symbol);
-        // coinRes.txs = coin.symbol === 'RPLTEST' ? txs.transactions.length : txs.txs.length;
+        // console.log(txs.transactions.length, '------------txs',coin.symbol)
+        coinRes.txs = coin.symbol === 'XRPTEST' ? txs.transactions.length : txs.txs.length;
         coinRes.exchangeRate = await userService.getExchangeRate(coin.symbol,coinRes.flatCurrency);
         coinRes.balanceInCurrency = coinRes.exchangeRate * coinRes.balance;
         totalBalance += coinRes.balanceInCurrency;

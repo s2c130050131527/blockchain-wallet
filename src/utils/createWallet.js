@@ -1,7 +1,7 @@
 import CoinList from './CoinList';
 import BTCWalletUtil from './BTCWalletUtils';
 import LTCWalletUtil from './LTCWalletUtils';
-import RPLWalletUtil from './RPLWalletUtils';
+import XRPWalletUtil from './XRPWalletUtils';
 
 class WalletUtils{
     
@@ -9,7 +9,7 @@ class WalletUtils{
         let walletArray = {};
         walletArray['BTCTEST']=BTCWalletUtil.createWallet();
         walletArray['LTCTEST']=LTCWalletUtil.createWallet();
-        walletArray['RPLTEST']=await RPLWalletUtil.createWallet();
+        walletArray['XRPTEST']=await XRPWalletUtil.createWallet();
         return walletArray;
     }
 
@@ -21,8 +21,8 @@ class WalletUtils{
         case 'LTCTEST':
           return await LTCWalletUtil.getBalance(address);
           break;
-        case 'RPLTEST':
-          return await RPLWalletUtil.getBalance(address);
+        case 'XRPTEST':
+          return await XRPWalletUtil.getBalance(address);
           break;
         }
        
@@ -39,8 +39,8 @@ class WalletUtils{
         case 'LTCTEST':
           return LTCWalletUtil.getTotalRecieved(address);
           break;
-        case 'RPLTEST':
-          return RPLWalletUtil.getTotalRecieved(address);
+        case 'XRPTEST':
+          return XRPWalletUtil.getTotalRecieved(address);
           break;
         }  
     }
@@ -54,8 +54,8 @@ class WalletUtils{
         case 'LTCTEST':
           return LTCWalletUtil.validateAddress(address);
           break;
-        case 'RPLTEST':
-          return RPLWalletUtil.validateAddress(address);
+        case 'XRPTEST':
+          return XRPWalletUtil.validateAddress(address);
           break;
         }  
     }
@@ -67,8 +67,8 @@ class WalletUtils{
         case 'LTCTEST':
           return LTCWalletUtil.getTotalSent(address);
           break;
-        case 'RPLTEST':
-          return RPLWalletUtil.getTotalSent(address);
+        case 'XRPTEST':
+          return XRPWalletUtil.getTotalSent(address);
           break;
         }
     }
@@ -81,8 +81,8 @@ class WalletUtils{
         case 'LTCTEST':
           return LTCWalletUtil.createTransaction(minerFee*100000000,toAddr,address,privateKey,amount*100000000,cb);
           break;
-        case 'RPLTEST':
-          return RPLWalletUtil.createTransaction(minerFee*100000000,toAddr,address,privateKey,amount,cb);
+        case 'XRPTEST':
+          return XRPWalletUtil.createTransaction(minerFee*100000000,toAddr,address,privateKey,amount,cb);
           break;
         }
     }

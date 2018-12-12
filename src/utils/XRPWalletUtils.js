@@ -6,7 +6,7 @@ const rippleApi = new rippleLib.RippleAPI({
 });
 rippleApi.connect();
 
-class RPLWalletUtils {
+class XRPWalletUtils {
 
     async createWallet(){
         
@@ -23,7 +23,7 @@ class RPLWalletUtils {
     async getBalance(address){
         const balances = await rippleApi.getBalances(address);
         console.log(balances);
-        return {confirmBalance: parseFloat(balances[0].value), unconfirmedBalance:parseFloat(balances[0].value)}
+        return {confirmBalance: parseFloat(balances[0].value), unconfirmedBalance:parseFloat(0.00)}
     }
     async validateAddress(address){
         return AddressValidator.validate(address,'XRP','testnet');
@@ -35,18 +35,19 @@ class RPLWalletUtils {
         return 0;
     }
     async createTransaction(minerFee,toAddr,address,privateKey,amount,cb) {
+        console.log(amount)
         const payment = {
             source: {
               address: address,
               maxAmount: {
-                value: amount,
+                value: amount.toString(),
                 currency: 'XRP'
               }
             },
             destination: {
               address: toAddr,
               amount: {
-                value: amount,
+                value: amount.toString(),
                 currency: 'XRP'
               }
             }
@@ -57,7 +58,7 @@ class RPLWalletUtils {
                 maxLedgerVersionOffset: 5
             });
             console.log(transactionObject);
-            const { signedTransaction } = api.sign(transactionObject.txJSON, privateKey);
+            const { signedTransaction } = rippleApi.sign(transactionObject.txJSON, privateKey);
             console.log('Signed', signedTransaction);
             const body = rippleApi.submit(signedTransaction);
             cb(null,body);
@@ -69,4 +70,4 @@ class RPLWalletUtils {
 
 }
 
-export default new RPLWalletUtils();
+export default new XRPWalletUtils();
