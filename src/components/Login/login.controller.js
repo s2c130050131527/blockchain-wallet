@@ -33,7 +33,7 @@ class UserController {
         let wallet = null;
 
         if(!user.walletCreated){
-            wallet = walletUtils.createWallet();
+            wallet = await walletUtils.createWallet();
             loginService.addWallet(wallet, parseInt(req.user.id),(err,client) => {
                 if(err){
                     console.log(err)
