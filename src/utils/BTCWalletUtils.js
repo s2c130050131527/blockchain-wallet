@@ -45,7 +45,6 @@ class BTCWalletUtils{
         json: true,
       }
       const balance = await request(options);
-      console.log(coin,balance)
       return parseFloat(balance.total_received)/100000000
     }
     async getTotalSent(address,coin){
@@ -59,21 +58,6 @@ class BTCWalletUtils{
      
     }
 
-    // getBalance(address,cb){
-    //     console.log('getting balance')
-    //     let balance = 0;
-    //     insight.getUnspentUtxos(address,(err,res) => {
-    //       if(err){
-    //         cb(err,balance)
-    //       }
-    //       console.log(res);
-    //       res.map(r => {
-    //         balance += r.satoshis;
-    //       })
-    //       cb(err,balance)
-    //     })
-    // }
-
     createTransaction(minerFee,toAddr,address,privateKey,amount,cb){
       
       insight.getUnspentUtxos(address,(err,utxos) => {
@@ -86,7 +70,6 @@ class BTCWalletUtils{
           cb("You don't have enough Satoshis to cover the miner fee.");
           return;
         }
-        console.log(amount)
           let bitcore_transaction = new bitcore.Transaction()
                 .from(utxos)
                 .to(toAddr, amount)

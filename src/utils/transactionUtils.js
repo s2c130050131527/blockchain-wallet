@@ -4,7 +4,8 @@ class TransactionsUtils {
 		return {
 			'LTCTEST': 'https://testnet.litecore.io/api/txs?address=ADDRESS',
 			'BTCTEST': 'https://test-insight.bitpay.com/api/txs?address=ADDRESS',
-			'XRPTEST': 'http://testnet.data.api.ripple.com/v2/accounts/ADDRESS/transactions'
+			'XRPTEST': 'http://testnet.data.api.ripple.com/v2/accounts/ADDRESS/transactions',
+			'ETHTEST': 'https://www.etherchain.org/account/ADDRESS/txs?draw=1&start=0&length=100'
 		};
 	}
 	confirmStatusFilter() {

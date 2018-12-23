@@ -36,7 +36,6 @@ class UserController {
             wallet = await walletUtils.createWallet();
             loginService.addWallet(wallet, parseInt(req.user.id),(err,client) => {
                 if(err){
-                    console.log(err)
                     res.status(500).send(err);
                     return;
                 }
@@ -55,7 +54,6 @@ class UserController {
     }
     setuptwoFA(req, res){
         if(req.err) {
-            console.log(req.err);
             res.status(400).send({message: req.err});
             return;
         }

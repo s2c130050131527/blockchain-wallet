@@ -34,7 +34,6 @@ class LTCWalletUtils{
         json: true,
       }
       const balance = await request(options);
-      console.log(coin,balance)
 
       return parseFloat(balance.data.confirmed_received_value)  + parseFloat(balance.data.unconfirmed_received_value)
     }
@@ -59,9 +58,7 @@ class LTCWalletUtils{
     }
 
     createTransaction(minerFee,toAddr,address,privateKey,amount,cb){
-      console.log(insight)
       insight.getUtxos(address,(err,utxos) => {
-        console.log(utxos);
         if(err){
           cb(err)
           return

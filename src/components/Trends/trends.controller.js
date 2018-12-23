@@ -19,7 +19,6 @@ class TrendsController {
       let finalTrendsObj = await TrendsService.transformCoinsData(trendsData, options);
       res.status(200).send(finalTrendsObj);
     } catch (error) {
-      console.log(error);
       res.status(400).send('Something Went Wrong');
       return;
     }
@@ -42,7 +41,6 @@ class TrendsController {
       finalData.data = trendsData.Data;
       res.status(200).send(finalData);
     } catch (error) {
-      console.log(error);
       res.status(400).send('Something Went Wrong');
       return;
     }

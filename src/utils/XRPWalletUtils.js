@@ -22,7 +22,6 @@ class XRPWalletUtils {
     }
     async getBalance(address){
         const balances = await rippleApi.getBalances(address);
-        console.log(balances);
         return {confirmBalance: parseFloat(balances[0].value), unconfirmedBalance:parseFloat(0.00)}
     }
     async validateAddress(address){
@@ -35,7 +34,6 @@ class XRPWalletUtils {
         return 0;
     }
     async createTransaction(minerFee,toAddr,address,privateKey,amount,cb) {
-        console.log(amount)
         const payment = {
             source: {
               address: address,
@@ -57,9 +55,7 @@ class XRPWalletUtils {
             const transactionObject = await rippleApi.preparePayment(address,payment,{
                 maxLedgerVersionOffset: 5
             });
-            console.log(transactionObject);
             const { signedTransaction } = rippleApi.sign(transactionObject.txJSON, privateKey);
-            console.log('Signed', signedTransaction);
             const body = rippleApi.submit(signedTransaction);
             cb(null,body);
           }catch(err){

@@ -2,6 +2,7 @@ import CoinList from './CoinList';
 import BTCWalletUtil from './BTCWalletUtils';
 import LTCWalletUtil from './LTCWalletUtils';
 import XRPWalletUtil from './XRPWalletUtils';
+import ETHWalletUtil from './ETHWalletUtils';
 
 class WalletUtils{
     
@@ -10,6 +11,8 @@ class WalletUtils{
         walletArray['BTCTEST']=BTCWalletUtil.createWallet();
         walletArray['LTCTEST']=LTCWalletUtil.createWallet();
         walletArray['XRPTEST']=await XRPWalletUtil.createWallet();
+        walletArray['ETHTEST']=await ETHWalletUtil.createWallet();
+
         return walletArray;
     }
 
@@ -24,14 +27,15 @@ class WalletUtils{
         case 'XRPTEST':
           return await XRPWalletUtil.getBalance(address);
           break;
+        case 'ETHTEST':
+          return await ETHWalletUtil.getBalance(address);
+          break;
         }
        
 
     }
 
     getTotalRecieved(coin,address){
-      console.log('here');
-      console.log(coin);
       switch(coin) {
         case 'BTCTEST':
           return  BTCWalletUtil.getTotalRecieved(address);
@@ -42,11 +46,12 @@ class WalletUtils{
         case 'XRPTEST':
           return XRPWalletUtil.getTotalRecieved(address);
           break;
+        case 'ETHTEST':
+          return ETHWalletUtil.getTotalRecieved(address);
+          break;
         }  
     }
     validateAddress(coin,address){
-      console.log('here');
-      console.log(coin);
       switch(coin) {
         case 'BTCTEST':
           return  BTCWalletUtil.validateAddress(address);
@@ -56,6 +61,9 @@ class WalletUtils{
           break;
         case 'XRPTEST':
           return XRPWalletUtil.validateAddress(address);
+          break;
+        case 'ETHTEST':
+          return ETHWalletUtil.validateAddress(address);
           break;
         }  
     }
@@ -70,9 +78,12 @@ class WalletUtils{
         case 'XRPTEST':
           return XRPWalletUtil.getTotalSent(address);
           break;
+        case 'ETHTEST':
+          return ETHWalletUtil.getTotalSent(address);
+          break;
         }
     }
-    createTransaction(coin,minerFee,toAddr,address,privateKey,amount,cb){
+    async createTransaction(coin,minerFee,toAddr,address,privateKey,amount,cb){
       console.log(coin,minerFee,toAddr,address,privateKey,amount)
       switch(coin) {
         case 'BTCTEST':
@@ -84,7 +95,16 @@ class WalletUtils{
         case 'XRPTEST':
           return XRPWalletUtil.createTransaction(minerFee*100000000,toAddr,address,privateKey,amount,cb);
           break;
+        case 'ETHTEST':
+          return await ETHWalletUtil.createTransaction(minerFee*100000000,toAddr,address,privateKey,amount,cb);
+          break;
         }
+    }
+    async getTransactionCount(coin, address){
+      switch (coin){
+        case 'ETHTEST':
+          return await ETHWalletUtil.getTransactionCount(address);
+      }
     }
 }
 

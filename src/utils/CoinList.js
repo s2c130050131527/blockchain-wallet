@@ -10,6 +10,10 @@ const coins =[
 	{
 		name: 'Ripple Test',
 		symbol: 'XRPTEST'   
+	},
+	{
+		name: 'Ethereum Test',
+		symbol: 'ETHTEST'
 	}
 ];
 

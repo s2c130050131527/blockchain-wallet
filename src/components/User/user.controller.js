@@ -1,5 +1,4 @@
 import UserService from './user.service';
-import wallet from '../../utils/createWallet'
 import userService from './user.service';
 import CoinList from '../../utils/CoinList';
 import TransactionsUtils from '../../utils/transactionUtils';
@@ -8,9 +7,6 @@ import uuidv4 from 'uuid/v4';
 import flatFist from '../../utils/FlatList';
 import request from "request-promise";
 import messager from '../../utils/messager';
-var totp = require('notp').totp;
-var base32 = require('hi-base32');
-
 class UserController {
   async getBalance(req, res) {
     const user = await UserService.findUser(parseInt(req.user.id));
@@ -121,9 +117,23 @@ class UserController {
           uri: TransactionsUtils.sources()[coin.symbol].replace(/ADDRESS/g, wallet.address),
           json: true,
         }
-        let txs = await request(options);
+        let txs ={};
+        if(coin.symbol !== 'ETHTEST'){
+         txs = await request(options);
+        }
         // console.log(txs.transactions.length, '------------txs',coin.symbol)
-        coinRes.txs = coin.symbol === 'XRPTEST' ? txs.transactions.length : txs.txs.length;
+        // coinRes.txs = coin.symbol === 'XRPTEST' ? txs.transactions.length : txs.txs.length;
+        switch(coin.symbol){
+          case 'ETHTEST':
+           coinRes.txs = await UserService.getTransactionCount(coin.symbol,wallet.address)
+            break;
+          case 'XRPTEST':
+            coinRes.txs = txs.transactions.length;
+            break;
+          default: 
+            coinRes.txs = txs.txs.length;
+            break;
+        }
         coinRes.exchangeRate = await userService.getExchangeRate(coin.symbol,coinRes.flatCurrency);
         coinRes.balanceInCurrency = coinRes.exchangeRate * coinRes.balance;
         totalBalance += coinRes.balanceInCurrency;

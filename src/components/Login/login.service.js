@@ -7,7 +7,6 @@ class LoginService {
 
     addUser(user){
       db.db.collection('users').insertOne(user,(err,res) => {
-        console.log('User Added');
       });
     }
 

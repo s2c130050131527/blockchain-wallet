@@ -11,7 +11,6 @@ class UserService {
 
     async getBalance(coin,address){
       const bal= await wallet.getBalance(coin,address)
-      console.log(bal);
       return bal;
     }
     async getExchangeRate(fsym,tsym){
@@ -24,7 +23,6 @@ class UserService {
       return parseFloat(rate[tsym]);
     }
     getTotalRecieved(address,coin){
-      console.log('here');
       return wallet.getTotalRecieved(coin,address);
     }
     getTotalSent(address,coin){
@@ -35,7 +33,6 @@ class UserService {
     updateCurrency(userId,newCurrency,cb){
       db.db.collection('users').updateOne({id:userId}, {$set: {currency:newCurrency}},((err,res)=>{
         if(err){
-          console.log(err)
           cb(err);
           return
         }
@@ -50,13 +47,13 @@ class UserService {
     validateAddress(coin,address){
       return wallet.validateAddress(coin,address);
     }
-    authorizeTransaction(transaction,wallets,cb){
+    async authorizeTransaction(transaction,wallets,cb){
       const coin = transaction.coin;
       const address = wallets[coin].address;
       const WIF = wallets[coin].WIF;
 
 
-      wallet.createTransaction(coin,transaction.minerFee,transaction.toAddr,address,WIF,parseFloat(transaction.amountRequested),cb)
+      await wallet.createTransaction(coin,transaction.minerFee,transaction.toAddr,address,WIF,parseFloat(transaction.amountRequested),cb)
     }
     addTransaction(userId,transaction,cb) {
       db.db.collection('users').findOne({id:userId},(err,res)=>{
@@ -81,6 +78,11 @@ class UserService {
         }
       });
 
+    }
+
+    async getTransactionCount(coin, address){
+      console.log('in user Service', address,coin);
+      return await wallet.getTransactionCount(coin, address);
     }
     getAllUsers() {
       return this.users;

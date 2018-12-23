@@ -1,20 +1,22 @@
 Arguments: 
-  /usr/local/bin/node /home/shrey.naygandhi/.yarn/bin/yarn.js add wallet-address-validator
+  /usr/local/bin/node /usr/bin/yarn add web3
 
 PATH: 
-  /home/shrey.naygandhi/.yarn/bin:/home/shrey.naygandhi/.config/yarn/global/node_modules/.bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/usr/lib/jvm/java-8-oracle/bin:/usr/lib/jvm/java-8-oracle/db/bin:/usr/lib/jvm/java-8-oracle/jre/bin:/home/shrey.naygandhi/npm/bin
+  /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin
 
 Yarn version: 
-  1.12.3
+  1.9.4
 
 Node version: 
-  11.2.0
+  8.10.0
 
 Platform: 
   linux x64
 
 Trace: 
-  Error: EACCES: permission denied, unlink '/home/shrey.naygandhi/Downloads/personal/Common Wallet/Common Wallet/testwallet/node_modules/.yarn-integrity'
+  Error: getaddrinfo ENOTFOUND registry.yarnpkg.com registry.yarnpkg.com:443
+      at errnoException (dns.js:50:10)
+      at GetAddrInfoReqWrap.onlookup [as oncomplete] (dns.js:92:26)
 
 npm manifest: 
   {
@@ -59,7 +61,8 @@ npm manifest:
       "request": "^2.88.0",
       "request-promise": "^4.2.2",
       "ripple-lib": "^1.1.0",
-      "uuid": "^3.3.2"
+      "uuid": "^3.3.2",
+      "wallet-address-validator": "^0.2.4"
     },
     "devDependencies": {
       "babel-cli": "^6.26.0",
@@ -1032,6 +1035,12 @@ Lockfile:
   base-x@^1.0.1:
     version "1.1.0"
     resolved "http://registry.npmjs.org/base-x/-/base-x-1.1.0.tgz#42d3d717474f9ea02207f6d1aa1f426913eeb7ac"
+  
+  base-x@^3.0.4:
+    version "3.0.5"
+    resolved "https://registry.yarnpkg.com/base-x/-/base-x-3.0.5.tgz#d3ada59afed05b921ab581ec3112e6444ba0795a"
+    dependencies:
+      safe-buffer "^5.0.1"
   
   base@^0.11.1:
     version "0.11.2"
@@ -2953,6 +2962,10 @@ Lockfile:
       json-schema "0.2.3"
       verror "1.10.0"
   
+  jssha@2.3.1:
+    version "2.3.1"
+    resolved "https://registry.yarnpkg.com/jssha/-/jssha-2.3.1.tgz#147b2125369035ca4b2f7d210dc539f009b3de9a"
+  
   jstransformer@0.0.2:
     version "0.0.2"
     resolved "https://registry.yarnpkg.com/jstransformer/-/jstransformer-0.0.2.tgz#7aae29a903d196cfa0973d885d3e47947ecd76ab"
@@ -4855,6 +4868,13 @@ Lockfile:
   void-elements@~2.0.1:
     version "2.0.1"
     resolved "https://registry.yarnpkg.com/void-elements/-/void-elements-2.0.1.tgz#c066afb582bb1cb4128d60ea92392e94d5e9dbec"
+  
+  wallet-address-validator@^0.2.4:
+    version "0.2.4"
+    resolved "https://registry.yarnpkg.com/wallet-address-validator/-/wallet-address-validator-0.2.4.tgz#717ce316143b679645639986cc0847a107255881"
+    dependencies:
+      base-x "^3.0.4"
+      jssha "2.3.1"
   
   which@^1.2.9:
     version "1.3.1"
