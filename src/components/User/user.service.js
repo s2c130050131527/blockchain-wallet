@@ -3,30 +3,40 @@ import request from "request-promise";
 import wallet from '../../utils/createWallet'
 import transactionUtils from '../../utils/transactionUtils'
 class UserService {
-    'use strict'
 
-    constructor() {
-      this.users = [];
-    }
-
-    async getBalance(coin,address){
-      const bal= await wallet.getBalance(coin,address)
+    async getBalance(coin,address,account){
+      const bal= await wallet.getBalance(coin,address,account)
+        if(coin === 'LOBSTEX'){
+          console.log('balance', bal)
+        }
       return bal;
     }
     async getExchangeRate(fsym,tsym){
+      console.log(fsym);
+      if(fsym === 'LOBSTEX'){
+        const options = {
+          method: 'GET',
+          uri: `https://api.coingecko.com/api/v3/simple/price?ids=lobstex-coin&vs_currencies=${tsym}`,
+          json: true
+        };
+      let rate = await request(options);
+      console.log(rate['lobstex-coin']);
+      return parseFloat(rate['lobstex-coin'][tsym.toLowerCase()]);
+      }
       var options = {
         method: 'GET',
         uri: `https://min-api.cryptocompare.com/data/price?fsym=${fsym.substring(0,3)}&tsyms=${tsym}`,
         json: true
-      }
+      };
+      
       const rate = await request(options);
       return parseFloat(rate[tsym]);
     }
-    getTotalRecieved(address,coin){
-      return wallet.getTotalRecieved(coin,address);
+    getTotalRecieved(address,coin,account){
+      return wallet.getTotalRecieved(coin,address,account);
     }
-    getTotalSent(address,coin){
-      return wallet.getTotalSent(coin,address)
+    getTotalSent(address,coin,account){
+      return wallet.getTotalSent(coin,address,account)
 
     }
     
@@ -80,9 +90,8 @@ class UserService {
 
     }
 
-    async getTransactionCount(coin, address){
-      console.log('in user Service', address,coin);
-      return await wallet.getTransactionCount(coin, address);
+    async getTransactionCount(coin, address,account){
+      return await wallet.getTransactionCount(coin, address,account);
     }
     getAllUsers() {
       return this.users;

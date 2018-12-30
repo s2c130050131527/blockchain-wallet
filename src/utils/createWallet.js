@@ -3,20 +3,21 @@ import BTCWalletUtil from './BTCWalletUtils';
 import LTCWalletUtil from './LTCWalletUtils';
 import XRPWalletUtil from './XRPWalletUtils';
 import ETHWalletUtil from './ETHWalletUtils';
+import LOBSWalletUtil from './LOBSWalletUtils';
 
 class WalletUtils{
     
-    async createWallet(){
+    async createWallet(accountName){
         let walletArray = {};
         walletArray['BTCTEST']=BTCWalletUtil.createWallet();
         walletArray['LTCTEST']=LTCWalletUtil.createWallet();
         walletArray['XRPTEST']=await XRPWalletUtil.createWallet();
         walletArray['ETHTEST']=await ETHWalletUtil.createWallet();
-
+        walletArray['LOBSTEX'] = await LOBSWalletUtil.createWallet(accountName);
         return walletArray;
     }
 
-    async getBalance(coin,address){
+    async getBalance(coin,address,account){
       switch(coin) {
         case 'BTCTEST':
           return await BTCWalletUtil.getBalance(address);
@@ -30,12 +31,15 @@ class WalletUtils{
         case 'ETHTEST':
           return await ETHWalletUtil.getBalance(address);
           break;
+        case 'LOBSTEX':
+          return await LOBSWalletUtil.getBalance(address,account);
+          break;
         }
        
 
     }
 
-    getTotalRecieved(coin,address){
+    getTotalRecieved(coin,address,account){
       switch(coin) {
         case 'BTCTEST':
           return  BTCWalletUtil.getTotalRecieved(address);
@@ -48,6 +52,9 @@ class WalletUtils{
           break;
         case 'ETHTEST':
           return ETHWalletUtil.getTotalRecieved(address);
+          break;
+        case 'LOBSTEX':
+          return LOBSWalletUtil.getTotalRecieved(address,'',account);
           break;
         }  
     }
@@ -65,9 +72,12 @@ class WalletUtils{
         case 'ETHTEST':
           return ETHWalletUtil.validateAddress(address);
           break;
+        case 'LOBSTEX':
+          return LOBSWalletUtil.validateAddress(address);
+          break;
         }  
     }
-    getTotalSent(coin,address){
+    getTotalSent(coin,address,account){
       switch(coin) {
         case 'BTCTEST':
           return BTCWalletUtil.getTotalSent(address);
@@ -80,6 +90,9 @@ class WalletUtils{
           break;
         case 'ETHTEST':
           return ETHWalletUtil.getTotalSent(address);
+          break;
+        case 'LOBSTEX':
+          return LOBSWalletUtil.getTotalSent(address,'',account);
           break;
         }
     }
@@ -98,12 +111,17 @@ class WalletUtils{
         case 'ETHTEST':
           return await ETHWalletUtil.createTransaction(minerFee*100000000,toAddr,address,privateKey,amount,cb);
           break;
+        case 'LOBSTEX':
+          return await LOBSWalletUtil.createTransaction(minerFee,toAddr,address,privateKey,amount,cb);
+          break;
         }
     }
-    async getTransactionCount(coin, address){
+    async getTransactionCount(coin, address,account){
       switch (coin){
         case 'ETHTEST':
           return await ETHWalletUtil.getTransactionCount(address);
+        case 'LOBSTEX':
+          return await LOBSWalletUtil.getTransactionCount(address,account);
       }
     }
 }

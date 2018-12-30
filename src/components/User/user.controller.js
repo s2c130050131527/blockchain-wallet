@@ -11,7 +11,6 @@ class UserController {
   async getBalance(req, res) {
     const user = await UserService.findUser(parseInt(req.user.id));
     const address = user.wallet[req.params.coin].address;
-    console.log(user.currency);
     const CoinSymbol = CoinList.map(e => {
       return e.symbol;
     });
@@ -26,7 +25,10 @@ class UserController {
     const resBody = {...coinObj};
     try {
     resBody.address = address;
-    const balanceRes = await UserService.getBalance(req.params.coin, address);
+    const balanceRes = await UserService.getBalance(req.params.coin, address,user.username);
+    if(req.params.coin === "LOBSTEX"){
+      console.log(balanceRes,'balanceRes');
+    }
     resBody.balance = (balanceRes.confirmBalance + balanceRes.unconfirmedBalance);
     const flatCurrency = user.currency[0].currency;
     console.log(flatCurrency)
@@ -34,8 +36,8 @@ class UserController {
     resBody.flatBalance = resBody.balance * resBody.exchangeRate;
     resBody.flatCurrency = flatCurrency;
     resBody.flatSymbol = user.currency[0].symbol;
-    resBody.totalMoneySent = await userService.getTotalSent(address,req.params.coin);
-    resBody.totalMoneyRecieved = await userService.getTotalRecieved(address,req.params.coin);
+    resBody.totalMoneySent = await userService.getTotalSent(address,req.params.coin,user.username);
+    resBody.totalMoneyRecieved = await userService.getTotalRecieved(address,req.params.coin,user.username);
     }catch(err){
       console.log(err);
       res.status(400).send('Something Went Wrong');
@@ -108,7 +110,7 @@ class UserController {
         await Promise.all(CoinList.map(async (coin) => {
         const coinRes = { ...coin };
         const wallet = user.wallet[coin.symbol];
-        const balanceRes = await userService.getBalance(coin.symbol,wallet.address);
+        const balanceRes = await userService.getBalance(coin.symbol,wallet.address,user.username);
         coinRes.balance = (balanceRes.confirmBalance + balanceRes.unconfirmedBalance)
         coinRes.confirmBalance = balanceRes.confirmBalance;
         coinRes.flatCurrency = user.currency[0].currency;
@@ -118,14 +120,17 @@ class UserController {
           json: true,
         }
         let txs ={};
-        if(coin.symbol !== 'ETHTEST'){
+        if(coin.symbol !== 'ETHTEST' && coin.symbol !== 'LOBSTEX'){
          txs = await request(options);
         }
         // console.log(txs.transactions.length, '------------txs',coin.symbol)
         // coinRes.txs = coin.symbol === 'XRPTEST' ? txs.transactions.length : txs.txs.length;
         switch(coin.symbol){
+          case 'LOBSTEX':
+           coinRes.txs = await UserService.getTransactionCount(coin.symbol,wallet.address,user.username)
+            break;
           case 'ETHTEST':
-           coinRes.txs = await UserService.getTransactionCount(coin.symbol,wallet.address)
+           coinRes.txs = await UserService.getTransactionCount(coin.symbol,wallet.address,user.username)
             break;
           case 'XRPTEST':
             coinRes.txs = txs.transactions.length;
@@ -137,8 +142,8 @@ class UserController {
         coinRes.exchangeRate = await userService.getExchangeRate(coin.symbol,coinRes.flatCurrency);
         coinRes.balanceInCurrency = coinRes.exchangeRate * coinRes.balance;
         totalBalance += coinRes.balanceInCurrency;
-        totalSent += await userService.getTotalSent(wallet.address,coin.symbol) * coinRes.exchangeRate ;
-        totalRecieved += await userService.getTotalRecieved(wallet.address,coin.symbol) * coinRes.exchangeRate;
+        totalSent += await userService.getTotalSent(wallet.address,coin.symbol,user.username) * coinRes.exchangeRate ;
+        totalRecieved += await userService.getTotalRecieved(wallet.address,coin.symbol,user.username) * coinRes.exchangeRate;
         walletsInfo.push(coinRes);
       }))
       let resBody = {coinList: walletsInfo, totalSent,totalRecieved,totalBalance,flatSymbol: user.currency[0].symbol}
@@ -172,7 +177,7 @@ class UserController {
     const amount = parseFloat(req.body.amount);
     const address = req.body.toAddr;
     const coin = req.body.coin;
-    const balanceRes = await userService.getBalance(coin,user.wallet[coin].address);
+    const balanceRes = await userService.getBalance(coin,user.wallet[coin].address,user.username);
     const totalBalance = balanceRes.confirmBalance + balanceRes.unconfirmedBalance;
     const flatCurrency = 'INR'
     const flatSymbol = '₹'
@@ -218,7 +223,8 @@ class UserController {
         ...txObject
       },1000* 60 * 3);
       await messager.sendOTPMobile(user.phone_number,'KOINTL','Please Complete transaction using '+txObject.OTP,txObject.OTP);
-      res.status(200).send(txObject);
+      const {OTP,...rest} = txObject;
+      res.status(200).send(rest);
       return;
     } else {
       res.status(400).send('Something Went Wrong')
@@ -248,6 +254,7 @@ class UserController {
 
     UserService.authorizeTransaction(transactionDetails,user.wallet,(err,transaction)=>{
       if(err){
+        console.log(err);
         res.status(500).send(err);
       }
       res.status(200).send(transaction)

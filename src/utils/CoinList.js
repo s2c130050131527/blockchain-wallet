@@ -14,6 +14,10 @@ const coins =[
 	{
 		name: 'Ethereum Test',
 		symbol: 'ETHTEST'
+	},
+	{
+		name: 'Lobstex',
+		symbol: 'LOBSTEX'
 	}
 ];
 
