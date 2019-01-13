@@ -9,20 +9,20 @@ class WalletUtils{
     
     async createWallet(accountName){
         let walletArray = {};
-        walletArray['BTCTEST']=BTCWalletUtil.createWallet();
-        walletArray['LTCTEST']=LTCWalletUtil.createWallet();
-        walletArray['XRPTEST']=await XRPWalletUtil.createWallet();
-        walletArray['ETHTEST']=await ETHWalletUtil.createWallet();
+        walletArray['BTC']=BTCWalletUtil.createWallet();
+        walletArray['LTC']=LTCWalletUtil.createWallet();
+        walletArray['XRP']=await XRPWalletUtil.createWallet();
+        walletArray['ETH']=await ETHWalletUtil.createWallet();
         walletArray['LOBSTEX'] = await LOBSWalletUtil.createWallet(accountName);
         return walletArray;
     }
 
     async getBalance(coin,address,account){
       switch(coin) {
-        case 'BTCTEST':
+        case 'BTC':
           return await BTCWalletUtil.getBalance(address);
           break;
-        case 'LTCTEST':
+        case 'LTC':
           return await LTCWalletUtil.getBalance(address);
           break;
         case 'XRPTEST':
@@ -41,10 +41,10 @@ class WalletUtils{
 
     getTotalRecieved(coin,address,account){
       switch(coin) {
-        case 'BTCTEST':
+        case 'BTC':
           return  BTCWalletUtil.getTotalRecieved(address);
           break;
-        case 'LTCTEST':
+        case 'LTC':
           return LTCWalletUtil.getTotalRecieved(address);
           break;
         case 'XRPTEST':
@@ -60,10 +60,10 @@ class WalletUtils{
     }
     validateAddress(coin,address){
       switch(coin) {
-        case 'BTCTEST':
+        case 'BTC':
           return  BTCWalletUtil.validateAddress(address);
           break;
-        case 'LTCTEST':
+        case 'LTC':
           return LTCWalletUtil.validateAddress(address);
           break;
         case 'XRPTEST':
@@ -79,10 +79,10 @@ class WalletUtils{
     }
     getTotalSent(coin,address,account){
       switch(coin) {
-        case 'BTCTEST':
+        case 'BTC':
           return BTCWalletUtil.getTotalSent(address);
           break;
-        case 'LTCTEST':
+        case 'LTC':
           return LTCWalletUtil.getTotalSent(address);
           break;
         case 'XRPTEST':
@@ -99,10 +99,10 @@ class WalletUtils{
     async createTransaction(coin,minerFee,toAddr,address,privateKey,amount,cb){
       console.log(coin,minerFee,toAddr,address,privateKey,amount)
       switch(coin) {
-        case 'BTCTEST':
+        case 'BTC':
           return BTCWalletUtil.createTransaction(minerFee*100000000,toAddr,address,privateKey,amount*100000000,cb);
           break;
-        case 'LTCTEST':
+        case 'LTC':
           return LTCWalletUtil.createTransaction(minerFee*100000000,toAddr,address,privateKey,amount*100000000,cb);
           break;
         case 'XRPTEST':

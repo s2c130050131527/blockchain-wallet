@@ -1,6 +1,6 @@
 var bitcore = require('bitcore-lib');
 import explorers from 'bitcore-explorers';
-var insight = new explorers.Insight('testnet');
+var insight = new explorers.Insight();
 import bitcoreAddress from 'bitcoin-address';
 import request from 'request-promise';
 class BTCWalletUtils{
@@ -8,7 +8,7 @@ class BTCWalletUtils{
     createWallet(){
         const randomBuffer= bitcore.crypto.Random.getRandomBuffer(32);
         const randomNumber = bitcore.crypto.BN.fromBuffer(randomBuffer);
-        const privateKey = new bitcore.PrivateKey(randomNumber,'testnet');
+        const privateKey = new bitcore.PrivateKey(randomNumber);
         const WIF = privateKey.toWIF();
         const address = privateKey.toAddress();
         return {
@@ -20,7 +20,7 @@ class BTCWalletUtils{
       
       var options = {
         method: 'GET',
-        uri: 'https://api.blockcypher.com/v1/btc/test3/addrs/'+address+'/full',
+        uri: 'https://api.blockcypher.com/v1/btc/main/addrs/'+address+'/full',
         json: true,
       }
       const balance = await request(options);
@@ -31,7 +31,7 @@ class BTCWalletUtils{
     async validateAddress(address){
       var options = {
         method: 'GET',
-        uri: 'https://chain.so/api/v2/is_address_valid/BTCTEST/'+address,
+        uri: 'https://chain.so/api/v2/is_address_valid/BTC/'+address,
         json: true,
       }
       const balance = await request(options);
@@ -41,7 +41,7 @@ class BTCWalletUtils{
     async getTotalRecieved(address,coin){
       var options = {
         method: 'GET',
-        uri: 'https://api.blockcypher.com/v1/btc/test3/addrs/'+address+'/full?limit=50',
+        uri: 'https://api.blockcypher.com/v1/btc/main/addrs/'+address+'/full?limit=50',
         json: true,
       }
       const balance = await request(options);
@@ -50,7 +50,7 @@ class BTCWalletUtils{
     async getTotalSent(address,coin){
       var options = {
         method: 'GET',
-        uri: 'https://api.blockcypher.com/v1/btc/test3/addrs/'+address+'/full?limit=50',
+        uri: 'https://api.blockcypher.com/v1/btc/main/addrs/'+address+'/full?limit=50',
         json: true,
       }
       const balance = await request(options);

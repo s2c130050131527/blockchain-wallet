@@ -2,10 +2,10 @@
 class TransactionsUtils {
 	sources() {
 		return {
-			'LTCTEST': 'https://testnet.litecore.io/api/txs?address=ADDRESS',
-			'BTCTEST': 'https://test-insight.bitpay.com/api/txs?address=ADDRESS',
-			'XRPTEST': 'http://testnet.data.api.ripple.com/v2/accounts/ADDRESS/transactions',
-			'ETHTEST': 'https://www.etherchain.org/account/ADDRESS/txs?draw=1&start=0&length=100',
+			'LTC': 'https://insight.litecore.io/api/txs?address=ADDRESS',
+			'BTC': 'https://insight.bitpay.com/api/txs?address=ADDRESS',
+			'XRP': 'http://testnet.data.api.ripple.com/v2/accounts/ADDRESS/transactions',
+			'ETH': 'https://www.etherchain.org/account/ADDRESS/txs?draw=1&start=0&length=100',
 			'LOBSTEX': '',
 		};
 	}

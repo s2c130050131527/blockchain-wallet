@@ -1,13 +1,13 @@
 var litecore = require('litecore-lib');
 import explorers from 'litecore-explorers';
-var insight = new explorers.Insight('https://testnet.litecore.io','testnet');
+var insight = new explorers.Insight('https://insight.litecore.io/','mainnet');
 import request from 'request-promise';
 class LTCWalletUtils{
     
     createWallet(){
         const randomBuffer= litecore.crypto.Random.getRandomBuffer(32);
         const randomNumber = litecore.crypto.BN.fromBuffer(randomBuffer);
-        const privateKey = new litecore.PrivateKey(randomNumber,'testnet');
+        const privateKey = new litecore.PrivateKey(randomNumber);
         const WIF = privateKey.toWIF();
         const address = privateKey.toAddress();
         return {
@@ -19,7 +19,7 @@ class LTCWalletUtils{
       
       var options = {
         method: 'GET',
-        uri: 'https://chain.so/api/v2/get_address_balance/LTCTEST/'+address+'/0',
+        uri: 'https://chain.so/api/v2/get_address_balance/LTC/'+address+'/0',
         json: true,
       }
       const balance = await request(options);
@@ -30,7 +30,7 @@ class LTCWalletUtils{
     async getTotalRecieved(address,coin){
       var options = {
         method: 'GET',
-        uri: 'https://chain.so/api/v2/get_address_received/LTCTEST/'+address,
+        uri: 'https://chain.so/api/v2/get_address_received/LTC/'+address,
         json: true,
       }
       const balance = await request(options);
@@ -40,7 +40,7 @@ class LTCWalletUtils{
     async getTotalSent(address,coin){
       var options = {
         method: 'GET',
-        uri: 'https://chain.so/api/v2/get_address_spent/LTCTEST/'+address,
+        uri: 'https://chain.so/api/v2/get_address_spent/LTC/'+address,
         json: true,
       }
       const balance = await request(options);
@@ -50,7 +50,7 @@ class LTCWalletUtils{
     async validateAddress(address){
       var options = {
         method: 'GET',
-        uri: 'https://chain.so/api/v2/is_address_valid/LTCTEST/'+address,
+        uri: 'https://chain.so/api/v2/is_address_valid/LTC/'+address,
         json: true,
       }
       const balance = await request(options);

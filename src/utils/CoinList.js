@@ -1,20 +1,20 @@
 const coins =[
 	{
-		name:'Bitcoin Test',
-		symbol:'BTCTEST'
+		name:'Bitcoin',
+		symbol:'BTC'
 	},
 	{
-		name: 'Litecoin Test',
-		symbol: 'LTCTEST'
+		name: 'Litecoin',
+		symbol: 'LTC'
 	},
-	{
-		name: 'Ripple Test',
-		symbol: 'XRPTEST'   
-	},
-	{
-		name: 'Ethereum Test',
-		symbol: 'ETHTEST'
-	},
+	// {
+	// 	name: 'Ripple Test',
+	// 	symbol: 'XRPTEST'   
+	// },
+	// {
+	// 	name: 'Ethereum Test',
+	// 	symbol: 'ETHTEST'
+	// },
 	{
 		name: 'Lobstex',
 		symbol: 'LOBSTEX'
