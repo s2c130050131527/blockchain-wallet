@@ -2,6 +2,7 @@ import db from '../../database';
 import request from "request-promise";
 import wallet from '../../utils/createWallet'
 import transactionUtils from '../../utils/transactionUtils'
+import LOBSWalletUtils from "../../utils/LOBSWalletUtils";
 class UserService {
 
     async getBalance(coin,address,account){
@@ -87,6 +88,12 @@ class UserService {
         });
         }
       });
+
+    }
+
+    async getTransactionDetail(coin,address,account){
+      console.log('getTransactionDetail',coin,address,account)
+      return await LOBSWalletUtils.getTransactionDetail(address,account);
 
     }
 

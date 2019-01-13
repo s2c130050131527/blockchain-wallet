@@ -81,7 +81,15 @@ class UserController {
         uri: TransactionsUtils.sources()[coins[i]].replace(/ADDRESS/g, addresses[coins[i]]),
         json: true,
       }
-      let txs = await request(options);
+      let txs;
+      if(coins[i] === 'LOBSTEX'){
+      txs = {
+        txs: await UserService.getTransactionDetail(coins[i], addresses[coins[i]],user.username),
+      }
+      }
+      else{
+      txs = await request(options);
+      }
       console.log(txs);
       txs.txs.forEach((txn) => {
         let transformedTxn = UserService.transformTransaction(txn, coins[i], addresses[coins[i]]);
