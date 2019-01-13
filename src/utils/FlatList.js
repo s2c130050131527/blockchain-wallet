@@ -1,20 +1,20 @@
 const flatFist= [
-    {
-        currency:'INR',
-        symbol:'₹'
-    },
-    {
-        currency:'GBP',
-        symbol:'£'
-    },
-    {
-        currency:'EUR',
-        symbol:'€'
-    },
-    {
-        currency:'USD',
-        symbol:'$'
-    }
-]
+	{
+		currency:'INR',
+		symbol:'₹'
+	},
+	{
+		currency:'GBP',
+		symbol:'£'
+	},
+	{
+		currency:'EUR',
+		symbol:'€'
+	},
+	{
+		currency:'USD',
+		symbol:'$'
+	}
+];
 
-export default flatFist
+export default flatFist;
