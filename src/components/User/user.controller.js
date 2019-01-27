@@ -199,24 +199,24 @@ class UserController {
                 try {
                     coinRes.exchangeRate = await userService.getExchangeRate(coin.symbol,coinRes.flatCurrency);
                 } catch (error) {
-                    console.log(`Error in getting exchangeRate of coin ${coin.symbol}`);
+                    console.log(`Error in getting exchangeRate of coin ${coin.symbol}`, error);
                 }
                 coinRes.exchangeRate = exchangeRate;
                 coinRes.balanceInCurrency = coinRes.exchangeRate * coinRes.balance;
                 totalBalance += coinRes.balanceInCurrency;
                 let totalSentCoin = 0;
-                let toalsReceivedCoin = 0;
+                let totalRecievedCoin = 0;
                 try {
                     totalSentCoin = await userService.getTotalSent(wallet.address,coin.symbol,user.username) * coinRes.exchangeRate;
                     totalSent += totalSentCoin;
                 } catch (error) {
-                    console.log(`error in getting totalSent of coin ${coin.symbol}`);
+                    console.log(`error in getting totalSent of coin ${coin.symbol}`, error);
                 }
                 try {
                     totalRecievedCoin = await userService.getTotalRecieved(wallet.address,coin.symbol,user.username) * coinRes.exchangeRate;
                     totalRecieved += totalRecievedCoin;
                 } catch (error) {
-                    console.log(`error in getting totalRecieved of coin ${coin.symbol}`);
+                    console.log(`error in getting totalRecieved of coin ${coin.symbol}`, error);
                 }
                 walletsInfo.push(coinRes);
             }
