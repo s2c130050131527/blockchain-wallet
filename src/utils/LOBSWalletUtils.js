@@ -10,14 +10,14 @@ import { connectableObservableDescriptor } from "rxjs/observable/ConnectableObse
 class BTCWalletUtils{
     constructor() {
         this.client = new BtcPromise.Client({
-            host:'45.76.218.42',
+            host:'149.28.135.88',
 	          port: 8332,
 	          user: 'kointel',
-	          pass: 'kointel',
+	          pass: '_rY8!p@o2ku#kX.J',
 	          timeout: 30000
         })
     }
-    
+
     async createWallet(account){
         const address = await this.client.getNewAddress(account);
         const privateKey = await this.client.dumpPrivKey(address);
@@ -29,14 +29,14 @@ class BTCWalletUtils{
       const balance = await this.client.getBalance(account,0);
       console.log('bal',balance,account);
       return {confirmBalance: parseFloat(balance), unconfirmedBalance:0.0}
-      
+
     }
 
     async validateAddress(address){
      const result = await this.client.validateAddress(address);
      return result.isvalid;
     }
-    
+
     async getTotalRecieved(address,coin,account){
       const total =  await this.client.getReceivedByAccount(account,0);
       return parseFloat(total);
@@ -46,7 +46,7 @@ class BTCWalletUtils{
       const bal = await this.getBalance('',account);
       const totalSent = parseFloat(totalRecieved)- parseFloat(bal.confirmBalance);
       return totalSent;
-     
+
     }
 
     async getTransactionDetail(address,account){
@@ -67,17 +67,17 @@ class BTCWalletUtils{
 
     transformTransaction(transaction){
       var confirmations = 0;
-    
+
       // if(transaction.__height >= 0) {
       //   confirmations = this._block.getTip().height - transaction.__height + 1;
       // }
-    
+
       var transformed = {
         txid: transaction.txid(),
         version: transaction.version,
         locktime: transaction.locktime
       };
-    
+
       if(transaction.inputs[0].isCoinbase()) {
         transformed.isCoinBase = true;
         transformed.vin = [
@@ -93,24 +93,24 @@ class BTCWalletUtils{
         transformed.valueIn = transaction.inputSatoshis / 1e8;
         transformed.fees = transaction.feeSatoshis / 1e8;
       }
-    
+
       transformed.vout = transaction.outputs.map(this.transformOutput.bind(this, options));
-    
+
       transformed.blockhash = transaction.blockhash;
       transformed.blockheight = transaction.__height;
       transformed.confirmations = confirmations;
-    
+
       var time = transaction.__timestamp ? transaction.__timestamp : Math.round(Date.now() / 1000);
       transformed.time = time;
       if (transformed.confirmations) {
         transformed.blocktime = transformed.time;
       }
-    
+
       transformed.valueOut = transaction.outputSatoshis / 1e8;
       transformed.size = transaction.getSize();
-    
+
       return transformed;
-    
+
     }
     createTransaction(minerFee,toAddr,address,privateKey,amount1,cb){
     this.client.listUnspent(6,9999999,[address]).then(res=>{
@@ -150,7 +150,7 @@ class BTCWalletUtils{
       }
     }).catch(err => {
       cb(err,null);
-    })  
+    })
     }
 }
 

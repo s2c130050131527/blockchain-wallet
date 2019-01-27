@@ -20,7 +20,7 @@ CREATE TABLE `' + dbconfig.database + '`.`' + dbconfig.users_table + '` ( \
     `twofa_setup` BOOLEAN default false,\
         PRIMARY KEY (`id`), \
     UNIQUE INDEX `id_UNIQUE` (`id` ASC), \
-    UNIQUE INDEX `username_UNIQUE` (`username` ASC) \
+    UNIQUE INDEX `username_phone_number_UNIQUE` (`username`, `phone_number` ASC) \
 )');
 
 console.log('Success: Database Created!')

@@ -6,14 +6,14 @@ import ETHWalletUtil from './ETHWalletUtils';
 import LOBSWalletUtil from './LOBSWalletUtils';
 
 class WalletUtils{
-    
+
     async createWallet(accountName){
         let walletArray = {};
         walletArray['BTCTEST']=BTCWalletUtil.createWallet();
         walletArray['LTCTEST']=LTCWalletUtil.createWallet();
         walletArray['XRPTEST']=await XRPWalletUtil.createWallet();
         walletArray['ETHTEST']=await ETHWalletUtil.createWallet();
-        walletArray['LOBSTEX'] = await LOBSWalletUtil.createWallet(accountName);
+        // walletArray['LOBSTEX'] = await LOBSWalletUtil.createWallet(accountName);
         return walletArray;
     }
 
@@ -35,7 +35,7 @@ class WalletUtils{
           return await LOBSWalletUtil.getBalance(address,account);
           break;
         }
-       
+
 
     }
 
@@ -56,7 +56,7 @@ class WalletUtils{
         case 'LOBSTEX':
           return LOBSWalletUtil.getTotalRecieved(address,'',account);
           break;
-        }  
+        }
     }
     validateAddress(coin,address){
       switch(coin) {
@@ -75,7 +75,7 @@ class WalletUtils{
         case 'LOBSTEX':
           return LOBSWalletUtil.validateAddress(address);
           break;
-        }  
+        }
     }
     getTotalSent(coin,address,account){
       switch(coin) {

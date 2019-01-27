@@ -61,6 +61,9 @@ class UserController {
       coins = [coins];
     }
     let addresses = {};
+    if (!user.wallet) {
+        return res.status(200).send({txList: []});
+    }
     for (let k = 0; k < coins.length; k++) {
       if (CoinSymbol.indexOf(coins[k]) === -1) {
         res.status(404).send({
@@ -68,7 +71,7 @@ class UserController {
         });
         return;
       }
-      addresses[coins[k]] = user.wallet[coins[k]].address;
+      addresses[coins[k]] = user.wallet[coins[k]] ?  user.wallet[coins[k]].address : "";
     }
     let txList = [];
     let txFilters = {
@@ -81,14 +84,26 @@ class UserController {
         uri: TransactionsUtils.sources()[coins[i]].replace(/ADDRESS/g, addresses[coins[i]]),
         json: true,
       }
-      let txs;
+      let txs = {};
       if(coins[i] === 'LOBSTEX'){
-      txs = {
-        txs: await UserService.getTransactionDetail(coins[i], addresses[coins[i]],user.username),
-      }
+          try {
+              let txsDetails = await UserService.getTransactionDetail(coins[i], addresses[coins[i]],user.username);
+              txs = {
+                txs: txsDetails,
+              }
+          } catch (error) {
+              console.log('error in UserService.getTransactionDetail', error)
+          }
       }
       else{
-      txs = await request(options);
+          try {
+              txs = await request(options);
+          } catch (error) {
+              console.log('error in rp', error.response.body);
+          }
+      }
+      if (!txs.txs) {
+          txs.txs = [];
       }
       console.log(txs);
       txs.txs.forEach((txn) => {
@@ -114,46 +129,116 @@ class UserController {
     let totalBalance = 0;
     let totalSent = 0;
     let totalRecieved = 0;
+    let resBody = {
+        "coinList": [],
+        "totalSent": 0,
+        "totalRecieved": 0,
+        "totalBalance": 0,
+        "flatSymbol": user.currency[0].symbol
+    }
+    let userWallet = user.wallet;
+    if (!userWallet) {
+        return res.status(200).send(resBody);
+    }
+    let promisesHash = {};
+    for (let coin of CoinList) {
+        let coinData = { ...coin };
+        let coinWallet = wallet[coinData.symbol];
+        if (!coinWallet) {
+            continue;
+        }
+        promisesHash[coinWallet.symbol] = {};
+        if (coinWallet.symbol && coinWallet.address, coinWallet.username) {
+            promisesHash[coinWallet.symbol].balance = userService.getBalance(
+                coinWallet.symbol,
+                coinWallet.address,
+                coinWallet.username
+            );
+            balancesPromises.push()
+        }
+        balancesPromises.push()
+    }
     try {
         await Promise.all(CoinList.map(async (coin) => {
-        const coinRes = { ...coin };
-        const wallet = user.wallet[coin.symbol];
-        const balanceRes = await userService.getBalance(coin.symbol,wallet.address,user.username);
-        coinRes.balance = (balanceRes.confirmBalance + balanceRes.unconfirmedBalance)
-        coinRes.confirmBalance = balanceRes.confirmBalance;
-        coinRes.flatCurrency = user.currency[0].currency;
-        let options = {
-          method: 'GET',
-          uri: TransactionsUtils.sources()[coin.symbol].replace(/ADDRESS/g, wallet.address),
-          json: true,
-        }
-        let txs ={};
-        if(coin.symbol !== 'ETHTEST' && coin.symbol !== 'LOBSTEX'){
-         txs = await request(options);
-        }
-        // console.log(txs.transactions.length, '------------txs',coin.symbol)
-        // coinRes.txs = coin.symbol === 'XRPTEST' ? txs.transactions.length : txs.txs.length;
-        switch(coin.symbol){
-          case 'LOBSTEX':
-           coinRes.txs = await UserService.getTransactionCount(coin.symbol,wallet.address,user.username)
-            break;
-          case 'ETHTEST':
-           coinRes.txs = await UserService.getTransactionCount(coin.symbol,wallet.address,user.username)
-            break;
-          case 'XRPTEST':
-            coinRes.txs = txs.transactions.length;
-            break;
-          default: 
-            coinRes.txs = txs.txs.length;
-            break;
-        }
-        coinRes.exchangeRate = await userService.getExchangeRate(coin.symbol,coinRes.flatCurrency);
-        coinRes.balanceInCurrency = coinRes.exchangeRate * coinRes.balance;
-        totalBalance += coinRes.balanceInCurrency;
-        totalSent += await userService.getTotalSent(wallet.address,coin.symbol,user.username) * coinRes.exchangeRate ;
-        totalRecieved += await userService.getTotalRecieved(wallet.address,coin.symbol,user.username) * coinRes.exchangeRate;
-        walletsInfo.push(coinRes);
-      }))
+            const coinRes = { ...coin };
+            const wallet = userWallet[coin.symbol];
+            if (wallet && wallet.address) {
+                let balanceRes = {
+                    "confirmBalance": 0,
+                    "unconfirmedBalance": 0
+                }
+                try {
+                    balanceRes = await userService.getBalance(coin.symbol,wallet.address,user.username);
+                } catch (error) {
+                    console.log(`error in getting balance of coin: ${coin.symbol}`, error);
+                }
+                coinRes.balance = (balanceRes.confirmBalance + balanceRes.unconfirmedBalance)
+                coinRes.confirmBalance = balanceRes.confirmBalance;
+                let flatCurrency = (user.currency && user.currency[0]) ? user.currency[0].currency : "$";
+                coinRes.flatCurrency = flatCurrency;
+                let options = {
+                    method: 'GET',
+                    uri: TransactionsUtils.sources()[coin.symbol].replace(/ADDRESS/g, wallet.address),
+                    json: true,
+                }
+                let txs = {};
+                if(coin.symbol !== 'ETHTEST' && coin.symbol !== 'LOBSTEX'){
+                    txs = await request(options);
+                }
+            // console.log(txs.transactions.length, '------------txs',coin.symbol)
+            // coinRes.txs = coin.symbol === 'XRPTEST' ? txs.transactions.length : txs.txs.length;
+                switch(coin.symbol){
+                    case 'LOBSTEX':
+                        let lobstexTrans = 0;
+                        try {
+                            lobstexTrans = await UserService.getTransactionCount(coin.symbol,wallet.address,user.username);
+                        } catch(error) {
+                            console.log(`error in getting lobstex transactions`, error);
+                        }
+                        coinRes.txs = lobstexTrans;
+                        break;
+                    case 'ETHTEST':
+                        let ethTrans = 0;
+                        try {
+                            ethTrans = await UserService.getTransactionCount(coin.symbol,wallet.address,user.username);
+                        } catch (error) {
+                            console.log(`error in getting ethTrans`, error);
+                        }
+                        coinRes.txs = ethTrans;
+                        break;
+                    case 'XRPTEST':
+                        coinRes.txs = txs.transactions.length;
+                        break;
+                    default:
+                        coinRes.txs = txs.txs.length;
+                        break;
+                }
+                let exchangeRate = 0;
+                try {
+                    coinRes.exchangeRate = await userService.getExchangeRate(coin.symbol,coinRes.flatCurrency);
+                } catch (error) {
+                    console.log(`Error in getting exchangeRate of coin ${coin.symbol}`);
+                }
+                coinRes.exchangeRate = exchangeRate;
+                coinRes.balanceInCurrency = coinRes.exchangeRate * coinRes.balance;
+                totalBalance += coinRes.balanceInCurrency;
+                let totalSentCoin = 0;
+                let toalsReceivedCoin = 0;
+                try {
+                    totalSentCoin = await userService.getTotalSent(wallet.address,coin.symbol,user.username) * coinRes.exchangeRate;
+                    totalSent += totalSentCoin;
+                } catch (error) {
+                    console.log(`error in getting totalSent of coin ${coin.symbol}`);
+                }
+                try {
+                    totalRecievedCoin = await userService.getTotalRecieved(wallet.address,coin.symbol,user.username) * coinRes.exchangeRate;
+                    totalRecieved += totalRecievedCoin;
+                } catch (error) {
+                    console.log(`error in getting totalRecieved of coin ${coin.symbol}`);
+                }
+                walletsInfo.push(coinRes);
+            }
+        }))
       let resBody = {coinList: walletsInfo, totalSent,totalRecieved,totalBalance,flatSymbol: user.currency[0].symbol}
       res.status(200).send(resBody);
 

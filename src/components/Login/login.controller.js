@@ -5,15 +5,15 @@ import walletUtils from '../../utils/createWallet';
 import flatFist from '../../utils/FlatList';
 
 class UserController {
-  
+
     async loginUser(req, res){
         if(req.err) {
             res.status(400).send({message:req.err});
             return;
         }
         res.status(200).send({userId:req.user.id, timestamp: new Date().getTime()+60*2*1000});
-       
-       
+
+
     }
     async verifyLoginOTP(req,res){
         if(req.err){
@@ -33,7 +33,11 @@ class UserController {
         let wallet = null;
 
         if(!user.walletCreated){
-            wallet = await walletUtils.createWallet(user.username);
+            try {
+                wallet = await walletUtils.createWallet(user.username);
+            } catch (error) {
+                console.log('____________________________', error);
+            }
             loginService.addWallet(wallet, parseInt(req.user.id),(err,client) => {
                 if(err){
                     res.status(500).send(err);
@@ -64,7 +68,7 @@ class UserController {
         res.status(200).send({message: 'Signup Successful', userid: req.user.id});
     }
     getQR(req, res){
-  
+
     }
 }
 

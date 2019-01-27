@@ -1,1 +1,24 @@
+# Logs
+logs
+*.log
+
+# Runtime data
+pids
+*.pid
+*.seed
+
+## NodeJs
 node_modules
+package-lock.json
+
+# Environment files
+.env.app
+*.env
+*_venv
+
+# IDE files
+.vscode
+.idea
+
+# linter files
+.eslintrc.js

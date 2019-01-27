@@ -20,7 +20,7 @@ import Messager from '../utils/messager';
 function handleDisconnect() {
     connection = mysql.createConnection(dbconfig.connection); // Recreate the connection, since
                                                     // the old one cannot be reused.
-  
+
     connection.connect(function(err) {              // The server is either down
       if(err) {                                     // or restarting (takes a while sometimes).
         console.log('error when connecting to db:', err);
