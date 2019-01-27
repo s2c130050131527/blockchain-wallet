@@ -140,24 +140,6 @@ class UserController {
     if (!userWallet) {
         return res.status(200).send(resBody);
     }
-    let promisesHash = {};
-    for (let coin of CoinList) {
-        let coinData = { ...coin };
-        let coinWallet = wallet[coinData.symbol];
-        if (!coinWallet) {
-            continue;
-        }
-        promisesHash[coinWallet.symbol] = {};
-        if (coinWallet.symbol && coinWallet.address, coinWallet.username) {
-            promisesHash[coinWallet.symbol].balance = userService.getBalance(
-                coinWallet.symbol,
-                coinWallet.address,
-                coinWallet.username
-            );
-            balancesPromises.push()
-        }
-        balancesPromises.push()
-    }
     try {
         await Promise.all(CoinList.map(async (coin) => {
             const coinRes = { ...coin };
