@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Logs
 logs
 *.log
@@ -22,3 +23,8 @@ package-lock.json
 
 # linter files
 .eslintrc.js
+=======
+node_modules
+.vscode
+.idea
+>>>>>>> d8a5927c0756528db76b4a247d8384426cd03495

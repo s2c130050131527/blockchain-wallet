@@ -15,10 +15,10 @@ const coins =[
 		name: 'Ethereum Test',
 		symbol: 'ETHTEST'
 	},
-	{
-		name: 'Lobstex',
-		symbol: 'LOBSTEX'
-	}
+	// {
+	// 	name: 'Lobstex',
+	// 	symbol: 'LOBSTEX'
+	// }
 ];
 
 export default coins;
