@@ -13,7 +13,7 @@ class WalletUtils{
         walletArray['LTCTEST']=LTCWalletUtil.createWallet();
         walletArray['XRPTEST']=await XRPWalletUtil.createWallet();
         walletArray['ETHTEST']=await ETHWalletUtil.createWallet();
-        walletArray['LOBSTEX'] = await LOBSWalletUtil.createWallet(accountName);
+        //walletArray['LOBSTEX'] = await LOBSWalletUtil.createWallet(accountName);
         return walletArray;
     }
 
