@@ -1,5 +1,5 @@
-SMS Sending Application
+Blockchain Wallet App
 
-Server NodeJS
-React with Server Side Rendering
-MongoDB
+Server 
+NodeJS 
+ES6 MongoDB
